@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <title>Map Edit</title>
+</head>
+
+<body>
+    <canvas id="CVS"></canvas>
+    <div id="XY">(X,Y)</div>
+    <input id="key" type="text" value="">
+    <label for="flip">Flip Horizontally</label>
+    <input id="flip" type="checkbox"><br>
+    <button onclick="putData(8)">データ出力 8×8</button>
+    <button onclick="putData(16)">データ出力 16×16</button>
+    <button onclick="putData(32)">データ出力 32×32</button>
+    <!-- <button onclick="save()">セーブ</button> -->
+    <!-- <button onclick="load()">ロード</button> -->
+    <button onclick="load16()">ロード16</button>
+    <button onclick="rotate90()">rotate90</button>
+    <button onclick="left16()">left16</button>
+    <button onclick="right16()">right16</button>
+    <button onclick="up16()">up16</button>
+    <button onclick="down16()">down16</button>
+    <button onclick="doClear()">データクリア</button><br>
+    <textarea id="tArea" rows=14 cols=80></textarea><br>
+    ・クリック→ドットを打つ、消す<br>
+    ・クリックしながらポインタを動かす→その位置にドットを打つ<br>
+    ・セーブ、ロード→ローカルストレージ(パソコン本体)に保存、読込<br>
+    <a href="index.html"><b>Arduboyでゲーム開発へ</b></a><br>
+
+    <script>
+        //キャンバスの準備
+        var SIZE = 16;
+        var cvs = document.getElementById("CVS");
+        var ctx = cvs.getContext("2d");
+        cvs.width = SIZE * 32;
+        cvs.height = SIZE * 32;
+
+        //ビットマップ用の配列
+        var bmp = new Array(32);
+
+        function drawBmp() {//ビットマップを描く
+            for (var y = 0; y < 32; y++) {
+                for (var x = 0; x < 32; x++) {
+                    ctx.fillStyle = "black";
+                    if (bmp[y][x] == 1) ctx.fillStyle = "white";
+                    ctx.fillRect(x * SIZE, y * SIZE, SIZE, SIZE);
+                    ctx.strokeStyle = "gray";
+                    ctx.strokeRect(x * SIZE, y * SIZE, SIZE, SIZE);
+                }
+            }
+            ctx.fillStyle = "silver";
+            ctx.fillRect(8 * SIZE, 0, 1, 16 * SIZE);
+            ctx.fillRect(0, 8 * SIZE, 16 * SIZE, 1);
+            ctx.fillRect(16 * SIZE, 0, 1, 32 * SIZE);
+            ctx.fillRect(0, 16 * SIZE, 32 * SIZE, 1);
+        }
+
+        function setBmp(x, y, v) {
+            bmp[y][x] = v;
+            drawBmp();
+            document.getElementById("XY").textContent = "(" + x + "," + y + ")";
+        }
+
+        //背景のキャンバスをクリックした時
+        var clickflg = 0;
+        cvs.addEventListener("mousedown", mDown);
+        cvs.addEventListener("mouseup", mUp);
+        cvs.addEventListener("mousemove", mMove);
+        function mDown(e) {
+            clickflg = 1;
+            var x = Math.floor(e.offsetX / SIZE);
+            var y = Math.floor(e.offsetY / SIZE);
+            setBmp(x, y, 1 - bmp[y][x]);
+        }
+        function mUp(e) {
+            clickflg = 0;
+        }
+        function mMove(e) {
+            var x = Math.floor(e.offsetX / SIZE);
+            var y = Math.floor(e.offsetY / SIZE);
+            if (clickflg == 1) setBmp(x, y, 1);
+        }
+
+        function putData(size) {//データ出力
+            var ta = document.getElementById("tArea");
+            var isFlip = document.getElementById("flip").checked;
+            let key = document.getElementById("key").value;
+
+            ta.value = "const " + key + " = [\n";
+
+            if (!isFlip) {
+                for (var y = 0; y < size; y++) {
+                    var tmp = '';
+                    for (var x = 0; x < size; x++) {
+                        tmp += bmp[y][x];
+                    }
+                    ta.value += ' 0x' + parseInt(tmp, 2).toString(16).padStart(size / 4, '0');
+
+                    if ((y + 1) % 4 == 0) {
+                        ta.value += ",\n";
+                    } else {
+                        ta.value += ",";
+                    }
+                }
+            } else {
+                for (var y = 0; y < size; y++) {
+                    var tmp = '';
+                    for (var x = size - 1; x >= 0; x--) {
+                        tmp += bmp[y][x];
+                    }
+                    ta.value += ' 0x' + parseInt(tmp, 2).toString(16).padStart(size / 4, '0');
+
+                    if ((y + 1) % 4 == 0) {
+                        ta.value += ",\n";
+                    } else {
+                        ta.value += ",";
+                    }
+                }
+            }
+
+            ta.value += "];";
+        }
+
+        function doClear() {
+            if (window.confirm("データをクリアします。よろしいですか？") == true) {
+                for (var y = 0; y < 32; y++) {
+                    for (var x = 0; x < 32; x++) bmp[y][x] = 0;
+                }
+                document.getElementById("tArea").value = "";
+                drawBmp();
+            }
+        }
+
+        function load16() {
+            var ta = document.getElementById("tArea");
+            var code = ta.value;
+            let match = code.match(/const\s+(\w+)\s*=/);
+            if (match) {
+                let arr = [];
+                document.getElementById("key").value = match[1];
+                eval(code + '; arr = ' + match[1]);
+                try {
+                    for (var y = 0; y < 16; y++) {
+                        let row = arr[y];
+                        for (var x = 0; x < 16; x++) {
+                            let isPixelOn = (row >> (16 - 1 - x)) & 1;
+                            bmp[y][x] = isPixelOn ? 1 : 0;
+                        }
+                    }
+                } catch (e) { }
+                drawBmp();
+            }
+        }
+
+        function rotate90() {
+            var ta = document.getElementById("tArea");
+            var code = ta.value;
+            let match = code.match(/const\s+(\w+)\s*=/);
+            if (match) {
+                let arr = [];
+                document.getElementById("key").value = match[1];
+                eval(code + '; arr = ' + match[1]);
+                let tmp = [];
+                try {
+                    for (var y = 0; y < 16; y++) {
+                        let row = arr[y];
+                        let a = [];
+                        for (var x = 0; x < 16; x++) {
+                            let isPixelOn = (row >> (16 - 1 - x)) & 1;
+                            a.push(isPixelOn ? 1 : 0);
+                        }
+                        tmp[y] = a;
+                    }
+                } catch (e) { }
+                tmp = rotateMatrix90(tmp);
+                for (var y = 0; y < 16; y++) {
+                    for (var x = 0; x < 16; x++) {
+                        bmp[y][x] = tmp[y][x];
+                    }
+                }
+                drawBmp();
+            }
+        }
+
+        function rotateMatrix90(matrix) {
+            const rows = matrix.length;
+            const cols = matrix[0].length;
+            const rotated = Array.from({ length: cols }, () => Array(rows).fill(0));
+
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    rotated[j][rows - 1 - i] = matrix[i][j];
+                }
+            }
+            return rotated;
+        }
+
+        
+        function up16() {
+            const rows = 16;
+            const cols = 16;
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    bmp[j][i] = bmp[j + 1][i];
+                }
+            }
+            drawBmp();
+        }
+
+        function down16() {
+            const rows = 16;
+            const cols = 16;
+            const arr = Array.from({ length: cols }, () => Array(rows).fill(0));
+            for (let i = 0; i < rows; i++) {
+                for (let j = 1; j < cols; j++) {
+                    arr[j][i] = bmp[j - 1][i];
+                }
+            }
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    bmp[j][i] = arr[j][i];
+                }
+            }
+            drawBmp();
+        }
+
+        function left16() {
+            const rows = 16;
+            const cols = 16;
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    bmp[j][i] = bmp[j][i + 1];
+                }
+            }
+            drawBmp();
+        }
+
+        
+        function right16() {
+            const rows = 16;
+            const cols = 16;
+            const arr = Array.from({ length: cols }, () => Array(rows).fill(0));
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    arr[j][i] = bmp[j][i - 1];
+                }
+            }
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    bmp[j][i] = arr[j][i];
+                }
+            }
+            drawBmp();
+        }
+
+
+        window.onload = function () {
+            for (var y = 0; y < 32; y++) bmp[y] = new Array(32).fill(0);
+            drawBmp();
+        }
+    </script>
+</body>
+
+</html>

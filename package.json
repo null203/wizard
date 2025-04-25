@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "@babel/cli": "^7.25.9",
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "core-js": "^3.39.0",
+    "terser": "^5.36.0"
+  },
+  "scripts": {
+    "build": "babel src -d dist && cd dist && terser kontra.min.js data.js util.js noise.js skill.js card.js dialog.js joystick.js game.js -o ../app.min.js --compress --mangle --comments false"
+  }
+}

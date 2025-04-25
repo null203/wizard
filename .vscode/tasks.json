@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Babel Compile",
+            "type": "shell",
+            "command": "npx",
+            "args": [
+                "babel",
+                "src",
+                "--out-dir",
+                "dist"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "detail": "Babel compile task"
+        }
+    ]
+}
