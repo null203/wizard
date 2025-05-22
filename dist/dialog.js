@@ -639,6 +639,7 @@ var cardDialog = Sprite({
     this.show = true;
     this.parent = parent;
     this.selectedCard = {};
+    clearArr(this.btnArr);
   },
   close: function close() {
     this.show = false;

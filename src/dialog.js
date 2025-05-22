@@ -582,6 +582,7 @@ const cardDialog = Sprite({
         this.show = true;
         this.parent = parent;
         this.selectedCard = {};
+        clearArr(this.btnArr);
     },
     close() {
         this.show = false;
