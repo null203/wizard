@@ -7,11 +7,26 @@ setAudioPath(path);
 initPointer();
 initKeys();
 
-const screenWidth = document.documentElement.clientWidth;
-const screenHeight = document.documentElement.clientHeight;
+const bitmapWidth = 16;
+const bitmapHeight = 16;
+const fontFamily = '"MyPixelFont"';
 
-const _kw = Math.min(Math.floor(screenWidth / 375), Math.floor(screenHeight / 667));
-const kw = _kw < 1 ? 1 : _kw;
+const targetWidth = 375;
+const targetHeight = 667;
+const targetRatio = targetWidth / targetHeight;
+let screenWidth = document.documentElement.clientWidth;
+let screenHeight = document.documentElement.clientHeight;
+const screenRatio = screenWidth / screenHeight;
+
+if (screenRatio > targetRatio) {
+    screenWidth = screenHeight * targetRatio;
+} else {
+    screenHeight = screenWidth / targetRatio;
+}
+screenWidth = screenWidth - screenWidth % bitmapWidth;
+screenHeight = screenHeight - screenHeight % bitmapHeight;
+
+const kw = Math.min(screenWidth / targetWidth, screenHeight / targetHeight);
 
 canvas.width = screenWidth;
 canvas.height = screenHeight;
@@ -30,8 +45,6 @@ const CARD_TYPE_SUPER_WEAPON = 5;
 let paused = true;
 let intervalId = null;
 
-const bitmapWidth = 16;
-const bitmapHeight = 16;
 const pixelSize = 2 * kw;
 const speedFactor = pixelSize / 50;
 const minDistance = 40 * kw;
@@ -42,6 +55,7 @@ const cardLimit = 9;
 
 const worldLimit = 5000 * kw;
 const enemyCount = 16;
+const expRatio = 1.5;
 
 const backgroundArr = [];
 const skillArr = [];

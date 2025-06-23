@@ -228,7 +228,7 @@ const card_lightsaber = {
             `武器: ${this.name}`,
             `等级: ${this.lv} / ${this.maxLv}`,
             `伤害倍率: ${lightsaber.ratio}%`,
-            `攻击距离: ${lightsaber.height}`,
+            `攻击距离: ${parseInt(lightsaber.height)}`,
             `前摇时间: ${lightsaber.preTime}秒`,
             `持续时间: ${lightsaber.time}秒`,
             `冷却时间: ${lightsaber.cd}秒`,
@@ -241,7 +241,7 @@ const card_lightsaber = {
             `武器: ${this.name}`,
             `等级: ${this.lv + 1} / ${this.maxLv}`,
             `伤害倍率: ${lightsaber.ratio + (this.lv == 0 ? 0 : this.step)}%`,
-            `攻击距离: ${lightsaber.height}`,
+            `攻击距离: ${parseInt(lightsaber.height)}`,
             `前摇时间: ${lightsaber.preTime}秒`,
             `持续时间: ${lightsaber.time}秒`,
             `冷却时间: ${lightsaber.cd}秒`,
@@ -815,20 +815,28 @@ const card_lance = {
     ]
 };
 
+function putItemCard(){
+    let arr = [];
+    arr.push(card_shield);
+    arr.push(card_belt);
+    arr.push(card_hp_medicine);
+    arr.push(card_necklace);
+    arr.push(card_tooth);
+    arr.push(card_magnet);
+    for (let card of arr) {
+        card.weight = 1;
+        cardArr.push(card);
+    }
+}
+
 function initCard() {
     clearArr(cardArr);
     cardArr.push(card_lightning);
     cardArr.push(card_fireball);
     cardArr.push(card_deathbook);
     cardArr.push(card_lightsaber);
-    cardArr.push(card_shield);
-    cardArr.push(card_belt);
-    cardArr.push(card_hp_medicine);
     cardArr.push(card_poison);
-    cardArr.push(card_tooth);
-    cardArr.push(card_necklace);
     cardArr.push(card_axe);
-    cardArr.push(card_magnet);
     cardArr.push(card_lance);
     for (let card of cardArr) {
         card.lv = 0;

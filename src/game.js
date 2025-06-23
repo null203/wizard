@@ -320,7 +320,7 @@ function showDamage(x, y, damage, crit) {
                 context.save();
                 context.translate(Math.round(screenWidth / 2 - player.x), Math.round(screenHeight / 2 - player.y - objSize * 3));
                 context.fillStyle = 'white';
-                context.font = `${Math.floor(13 * kw * crit)}px Arial`;
+                context.font = `${Math.floor(13 * kw * crit)}px ${fontFamily}`;
                 context.fillText(damage, -objSize * 3 / 5, -objSize / 2);
                 context.restore();
             }
@@ -345,7 +345,7 @@ function showMsg(x, y, msg, ttl = 120) {
                 context.save();
                 context.translate(Math.round(screenWidth / 2 - player.x + objSize / 2), Math.round(screenHeight / 2 - player.y + objSize / 2 - objSize * 3));
                 context.fillStyle = 'white';
-                context.font = `${Math.floor(19 * kw)}px Arial`;
+                context.font = `${Math.floor(19 * kw)}px ${fontFamily}`;
                 context.textAlign = 'center';
                 context.fillText(msg, 0, 0);
                 context.restore();
@@ -370,7 +370,7 @@ const expBar = Sprite({
 
         let fontSize = Math.floor(17 * kw);
         context.fillStyle = 'white';
-        context.font = `${fontSize}px Arial`;
+        context.font = `${fontSize}px ${fontFamily}`;
         context.textAlign = 'center';
         context.fillText(`LV ${player.lv}`, this.width / 2, this.height - 2 * kw);
     }
@@ -398,7 +398,7 @@ const statusBar = Sprite({
     render() {
         const hpBarWidth = Math.round((player.hp / player.maxHp) * 10);
         context.fillStyle = 'white';
-        context.font = `${Math.floor(13 * kw)}px Arial`;
+        context.font = `${Math.floor(16 * kw)}px ${fontFamily}`;
         context.fillText('HP ', objSize / 2, objSize / 2);
 
         for (let i = 1; i <= hpBarWidth; i++) {
@@ -412,7 +412,7 @@ const statusBar = Sprite({
         }
 
         context.textAlign = 'center';
-        context.font = `${Math.floor(19 * kw)}px Arial`;
+        context.font = `${Math.floor(19 * kw)}px ${fontFamily}`;
         context.fillText(`${this.time}`, screenWidth / 2, objSize);
     }
 });
@@ -514,6 +514,7 @@ const player = Sprite({
         }
     },
     addExp(exp) {
+        exp = Math.floor(exp * expRatio);
         if (this.lv < maxExp.length) {
             let tempExp = exp;
             while (tempExp > 0) {
@@ -524,6 +525,9 @@ const player = Sprite({
                     this.exp = 0;
                     this.maxExp = maxExp[this.lv - 1];
                     this.point++;
+                    if (this.lv == 5){
+                        putItemCard();
+                    }
                 } else {
                     return;
                 }
@@ -710,30 +714,31 @@ function intervalHandle() {
         no_skill_flag = false;
     }
 
-    if (statusBar.m < 5) {
+    if (statusBar.m < 3) {
         wave(slime, skeleton);
     }
     else if (boss_skeleton_flag) {
         boss_skeleton_flag = createBoss(boss_skeleton);
     }
-    else if (statusBar.m < 9) {
+    else if (statusBar.m < 6) {
         wave(spider, snake);
     }
     else if (boss_crab_flag) {
         boss_crab_flag = createBoss(boss_crab);
     }
-    else if (statusBar.m < 14) {
+    else if (statusBar.m < 9) {
         wave(mummy, orc);
     }
     else if (boss_tauren_flag) {
         boss_tauren_flag = createBoss(boss_tauren);
     }
-    else if (statusBar.m < 18) {
+    else if (statusBar.m < 12) {
         wave(devil, fox);
-    } else if (statusBar.m < 25) {
+    } else if (statusBar.m < 15) {
         wave(reaper, reaper);
     }
 }
+
 
 load(
     '/audio/attack_slime.mp3',
@@ -755,12 +760,16 @@ load(
     '/audio/skill_lance.mp3',
     '/audio/level_up.mp3'
 ).then(function () {
-    canvas.addEventListener('touchstart', handleTouchStart);
-    canvas.addEventListener('touchmove', handleTouchMove);
-    canvas.addEventListener('touchend', handleTouchEnd);
+    document.fonts.load(`12px ${fontFamily}`).then(function() {
+        loadDialog.assetsLoaded++;
+        canvas.addEventListener('touchstart', handleTouchStart);
+        canvas.addEventListener('touchmove', handleTouchMove);
+        canvas.addEventListener('touchend', handleTouchEnd);
+    });
 });
 
-loadDialog.numAssets = 18;
+
+loadDialog.numAssets = 19;
 loadDialog.assetsLoaded = 0;
 on('assetLoaded', function () {
     loadDialog.assetsLoaded++;

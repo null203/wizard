@@ -18,6 +18,7 @@ const lightning = Sprite({
     cd: 2,
     radius: objSize * 6,
     timeCount: 0,
+    frameCount: 0,
     target: null,
     init() {
         this.ratio = 360;
@@ -25,6 +26,7 @@ const lightning = Sprite({
         this.target = null;
     },
     update(dt) {
+        this.frameCount++;
         this.timeCount += dt;
         if (this.timeCount > this.cd + this.time) {
             this.timeCount = 0;
@@ -52,6 +54,9 @@ const lightning = Sprite({
                 this.timeCount = this.cd;
             }
         }
+        if (this.frameCount > 30000) {
+            this.frameCount = 0;
+        }
     },
     render() {
         if (this.target != null) {
@@ -59,7 +64,7 @@ const lightning = Sprite({
             if (distance < this.radius * 1.2) {
                 let i = Math.round(distance / (objSize * 2));
                 if (i < 2) i = 2;
-                if (i > 5) i = 5;
+                if (i > 4) i = 4;
                 this.drawLightning(player.x, player.y, this.target.x, this.target.y, i);
             }
         }

@@ -160,10 +160,10 @@ var card_lightsaber = {
   step: 40,
   weight: 0.1,
   getDetail: function getDetail() {
-    return ["\u6B66\u5668: ".concat(this.name), "\u7B49\u7EA7: ".concat(this.lv, " / ").concat(this.maxLv), "\u4F24\u5BB3\u500D\u7387: ".concat(lightsaber.ratio, "%"), "\u653B\u51FB\u8DDD\u79BB: ".concat(lightsaber.height), "\u524D\u6447\u65F6\u95F4: ".concat(lightsaber.preTime, "\u79D2"), "\u6301\u7EED\u65F6\u95F4: ".concat(lightsaber.time, "\u79D2"), "\u51B7\u5374\u65F6\u95F4: ".concat(lightsaber.cd, "\u79D2"), "\u653B\u51FB\u529B + 10", "\u53EF\u53D1\u52A8\u5723\u5251\u89E3\u653E\u653B\u51FB\u5927\u91CF\u654C\u4EBA\u3002"];
+    return ["\u6B66\u5668: ".concat(this.name), "\u7B49\u7EA7: ".concat(this.lv, " / ").concat(this.maxLv), "\u4F24\u5BB3\u500D\u7387: ".concat(lightsaber.ratio, "%"), "\u653B\u51FB\u8DDD\u79BB: ".concat(parseInt(lightsaber.height)), "\u524D\u6447\u65F6\u95F4: ".concat(lightsaber.preTime, "\u79D2"), "\u6301\u7EED\u65F6\u95F4: ".concat(lightsaber.time, "\u79D2"), "\u51B7\u5374\u65F6\u95F4: ".concat(lightsaber.cd, "\u79D2"), "\u653B\u51FB\u529B + 10", "\u53EF\u53D1\u52A8\u5723\u5251\u89E3\u653E\u653B\u51FB\u5927\u91CF\u654C\u4EBA\u3002"];
   },
   getDescription: function getDescription() {
-    return ["\u6B66\u5668: ".concat(this.name), "\u7B49\u7EA7: ".concat(this.lv + 1, " / ").concat(this.maxLv), "\u4F24\u5BB3\u500D\u7387: ".concat(lightsaber.ratio + (this.lv == 0 ? 0 : this.step), "%"), "\u653B\u51FB\u8DDD\u79BB: ".concat(lightsaber.height), "\u524D\u6447\u65F6\u95F4: ".concat(lightsaber.preTime, "\u79D2"), "\u6301\u7EED\u65F6\u95F4: ".concat(lightsaber.time, "\u79D2"), "\u51B7\u5374\u65F6\u95F4: ".concat(lightsaber.cd, "\u79D2"), "\u653B\u51FB\u529B + 10", "\u53EF\u53D1\u52A8\u5723\u5251\u89E3\u653E\u653B\u51FB\u5927\u91CF\u654C\u4EBA\u3002"];
+    return ["\u6B66\u5668: ".concat(this.name), "\u7B49\u7EA7: ".concat(this.lv + 1, " / ").concat(this.maxLv), "\u4F24\u5BB3\u500D\u7387: ".concat(lightsaber.ratio + (this.lv == 0 ? 0 : this.step), "%"), "\u653B\u51FB\u8DDD\u79BB: ".concat(parseInt(lightsaber.height)), "\u524D\u6447\u65F6\u95F4: ".concat(lightsaber.preTime, "\u79D2"), "\u6301\u7EED\u65F6\u95F4: ".concat(lightsaber.time, "\u79D2"), "\u51B7\u5374\u65F6\u95F4: ".concat(lightsaber.cd, "\u79D2"), "\u653B\u51FB\u529B + 10", "\u53EF\u53D1\u52A8\u5723\u5251\u89E3\u653E\u653B\u51FB\u5927\u91CF\u654C\u4EBA\u3002"];
   },
   remove: function remove() {
     removeFromArr(cardArr, this);
@@ -572,20 +572,28 @@ var card_lance = {
   },
   icon: [0xffff, 0x8001, 0x800d, 0x801d, 0x8039, 0x80d1, 0x8061, 0x80a1, 0x8101, 0x8201, 0x8401, 0x8801, 0x9001, 0xa001, 0x8001, 0xffff]
 };
+function putItemCard() {
+  var arr = [];
+  arr.push(card_shield);
+  arr.push(card_belt);
+  arr.push(card_hp_medicine);
+  arr.push(card_necklace);
+  arr.push(card_tooth);
+  arr.push(card_magnet);
+  for (var _i2 = 0, _arr = arr; _i2 < _arr.length; _i2++) {
+    var card = _arr[_i2];
+    card.weight = 1;
+    cardArr.push(card);
+  }
+}
 function initCard() {
   clearArr(cardArr);
   cardArr.push(card_lightning);
   cardArr.push(card_fireball);
   cardArr.push(card_deathbook);
   cardArr.push(card_lightsaber);
-  cardArr.push(card_shield);
-  cardArr.push(card_belt);
-  cardArr.push(card_hp_medicine);
   cardArr.push(card_poison);
-  cardArr.push(card_tooth);
-  cardArr.push(card_necklace);
   cardArr.push(card_axe);
-  cardArr.push(card_magnet);
   cardArr.push(card_lance);
   var _iterator2 = _createForOfIteratorHelper(cardArr),
     _step2;

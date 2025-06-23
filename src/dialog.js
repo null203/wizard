@@ -82,8 +82,8 @@ function drawCard(_x, _y, card, selectedCard) {
     if (card.lv == 0) {
         context.fillStyle = 'white';
         context.textAlign = 'center';
-        let fontSize = Math.floor(13 * kw);
-        context.font = `${fontSize}px Arial`;
+        let fontSize = Math.floor(15 * kw);
+        context.font = `${fontSize}px ${fontFamily}`;
         context.fillText('NEW', _x + card.width / 2, _y - size);
     }
     for (let y = 0; y < bitmapHeight; y++) {
@@ -147,7 +147,7 @@ const mainDialog = Sprite({
         drawSubWindow(x, y, this.width, this.height);
         let fontSize = Math.floor(16 * kw);
         context.fillStyle = 'white';
-        context.font = `${fontSize}px Arial`;
+        context.font = `${fontSize}px ${fontFamily}`;
         context.lineWidth = 1;
         context.textAlign = 'left';
         x = Math.floor(screenWidth / 2 - objSize * 4);
@@ -167,7 +167,7 @@ const mainDialog = Sprite({
         let top = y;
         let fontSize = Math.floor(16 * kw);
         context.fillStyle = 'white';
-        context.font = `${fontSize}px Arial`;
+        context.font = `${fontSize}px ${fontFamily}`;
         context.lineWidth = 1;
         context.textAlign = 'center';
         for (let card of player.cards) {
@@ -301,7 +301,7 @@ const levelUpDialog = Sprite({
         let y = 0;
         drawSubWindow(x, y, this.width, this.height);
         context.fillStyle = 'white';
-        context.font = `${Math.floor(19 * kw)}px Arial`;
+        context.font = `${Math.floor(19 * kw)}px ${fontFamily}`;
         context.lineWidth = 1;
         context.textAlign = 'center';
         context.fillText('升级', x + screenWidth / 2, y + objSize * 1.5);
@@ -315,7 +315,7 @@ const levelUpDialog = Sprite({
         drawCard(x, y, this.cards[2], this.selectedCard);
 
         context.fillStyle = 'white';
-        context.font = `${Math.floor(16 * kw)}px Arial`;
+        context.font = `${Math.floor(16 * kw)}px ${fontFamily}`;
         context.textAlign = 'left';
         context.fillStyle = 'white';
         x = objSize * 1.5;
@@ -343,7 +343,7 @@ const levelUpDialog = Sprite({
         context.strokeRect(x, y, width, height);
         context.fillStyle = 'white';
         context.textAlign = 'center';
-        context.font = `${Math.floor(16 * kw)}px Arial`;
+        context.font = `${Math.floor(16 * kw)}px ${fontFamily}`;
         context.fillText('确定', screenWidth / 2, y + height * 0.7);
     },
     drawResetBtn(x, y, width, height) {
@@ -356,7 +356,7 @@ const levelUpDialog = Sprite({
         context.strokeRect(x, y, width, height);
         context.fillStyle = 'white';
         context.textAlign = 'center';
-        context.font = `${Math.floor(16 * kw)}px Arial`;
+        context.font = `${Math.floor(16 * kw)}px ${fontFamily}`;
         context.fillText(`重置(剩余${this.resetCount}次)`, screenWidth / 2, y + height * 0.7);
     },
     drawCloseBtn() {
@@ -405,7 +405,7 @@ const startDialog = Sprite({
         context.fillStyle = 'black';
         context.fillRect(0, 0, screenWidth, screenHeight);
         context.fillStyle = 'white';
-        context.font = `${Math.floor(30 * kw)}px Arial`;
+        context.font = `${Math.floor(30 * kw)}px ${fontFamily}`;
         context.textAlign = 'center';
         context.fillText('点击开始游戏', screenWidth / 2, screenHeight / 2);
     }
@@ -466,11 +466,11 @@ const gameOverDialog = Sprite({
         x = screenWidth / 2;
         y += objSize * 1.5;
         context.fillStyle = 'white';
-        context.font = `${Math.floor(19 * kw)}px Arial`;
+        context.font = `${Math.floor(19 * kw)}px ${fontFamily}`;
         context.lineWidth = 1;
         context.textAlign = 'center';
         context.fillText('游戏结束', x, y);
-        context.font = `${Math.floor(16 * kw)}px Arial`;
+        context.font = `${Math.floor(16 * kw)}px ${fontFamily}`;
         context.lineWidth = 1;
         context.textAlign = 'left';
         x = Math.floor(screenWidth / 2 - objSize * 4);
@@ -491,7 +491,7 @@ const gameOverDialog = Sprite({
         let left = x;
         let top = y;
         context.fillStyle = 'white';
-        context.font = `${Math.floor(16 * kw)}px Arial`;
+        context.font = `${Math.floor(16 * kw)}px ${fontFamily}`;
         context.lineWidth = 1;
         context.textAlign = 'center';
         for (let card of player.cards) {
@@ -517,7 +517,7 @@ const gameOverDialog = Sprite({
         context.strokeRect(x, y, width, height);
         context.fillStyle = 'white';
         context.textAlign = 'center';
-        context.font = `${Math.floor(16 * kw)}px Arial`;
+        context.font = `${Math.floor(16 * kw)}px ${fontFamily}`;
         context.fillText('重新开始', screenWidth / 2, y + height * 0.7);
     }
 });
@@ -546,7 +546,7 @@ const loadDialog = Sprite({
         context.fillStyle = 'black';
         context.fillRect(0, 0, screenWidth, screenHeight);
         context.fillStyle = 'white';
-        context.font = `${Math.floor(30 * kw)}px Arial`;
+        context.font = `${Math.floor(30 * kw)}px ${fontFamily}`;
         context.textAlign = 'center';
         context.fillText(`Loading... (${this.assetsLoaded} / ${this.numAssets})`, screenWidth / 2, screenHeight / 2);
     }
@@ -592,7 +592,7 @@ const cardDialog = Sprite({
         let y = 0;
         drawSubWindow(x, y, this.width, this.height);
         context.fillStyle = 'white';
-        context.font = `${Math.floor(16 * kw)}px Arial`;
+        context.font = `${Math.floor(16 * kw)}px ${fontFamily}`;
         context.lineWidth = 1;
         context.textAlign = 'left';
         x = Math.floor(screenWidth / 2 - objSize * 4);
@@ -606,7 +606,7 @@ const cardDialog = Sprite({
         this.drawCloseBtn();
         if (this.selectedCard.name) {
             context.fillStyle = 'white';
-            context.font = `${Math.floor(16 * kw)}px Arial`;
+            context.font = `${Math.floor(16 * kw)}px ${fontFamily}`;
             context.lineWidth = 1;
             context.textAlign = 'left';
             y += objSize * 10;
@@ -624,7 +624,7 @@ const cardDialog = Sprite({
         let left = x;
         let top = y;
         let fontSize = Math.floor(16 * kw);
-        context.font = `${fontSize}px Arial`;
+        context.font = `${fontSize}px ${fontFamily}`;
         context.lineWidth = 1;
         context.textAlign = 'center';
         for (let card of player.cards) {
@@ -656,7 +656,7 @@ const cardDialog = Sprite({
         context.strokeRect(x, y, width, height);
         context.fillStyle = 'white';
         context.textAlign = 'center';
-        context.font = `${Math.floor(16 * kw)}px Arial`;
+        context.font = `${Math.floor(16 * kw)}px ${fontFamily}`;
         context.fillText('确定', screenWidth / 2, y + height * 0.7);
         this.addBtn({
             id: 'ok',
@@ -725,7 +725,7 @@ const cardDetailDialog = Sprite({
         let y = 0;
         drawSubWindow(x, y, this.width, this.height);
         context.fillStyle = 'white';
-        context.font = `${Math.floor(16 * kw)}px Arial`;
+        context.font = `${Math.floor(16 * kw)}px ${fontFamily}`;
         context.lineWidth = 1;
         context.textAlign = 'left';
         x = Math.floor(screenWidth / 2 - objSize * 4);
