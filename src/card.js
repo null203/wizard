@@ -815,7 +815,7 @@ const card_lance = {
     ]
 };
 
-function putItemCard(){
+function putItemCard() {
     let arr = [];
     arr.push(card_shield);
     arr.push(card_belt);
@@ -823,8 +823,14 @@ function putItemCard(){
     arr.push(card_necklace);
     arr.push(card_tooth);
     arr.push(card_magnet);
+    arr.push(card_lightsaber);
     for (let card of arr) {
-        card.weight = 1;
+        card.lv = 0;
+        if (card.type == CARD_TYPE_SUPER_WEAPON) {
+            card.weight = 0.1;
+        } else  {
+            card.weight = 1;
+        }
         cardArr.push(card);
     }
 }
@@ -834,7 +840,6 @@ function initCard() {
     cardArr.push(card_lightning);
     cardArr.push(card_fireball);
     cardArr.push(card_deathbook);
-    cardArr.push(card_lightsaber);
     cardArr.push(card_poison);
     cardArr.push(card_axe);
     cardArr.push(card_lance);
@@ -842,11 +847,7 @@ function initCard() {
         card.lv = 0;
         if (card.type == CARD_TYPE_WEAPON) {
             card.weight = 1.5;
-        } 
-        else if (card.type == CARD_TYPE_SUPER_WEAPON) {
-            card.weight = 0.1;
-        }
-        else  {
+        } else  {
             card.weight = 1;
         }
     }

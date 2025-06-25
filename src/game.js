@@ -20,7 +20,7 @@ function createBackground() {
             if (direction >= 3 && direction <= 4) {
                 hp = 100;
                 maxHp = 100;
-                def = 90;
+                def = 100;
             }
             if (direction >= 5 && direction <= 6) {
                 hp = 100;
@@ -59,7 +59,17 @@ function createBackground() {
                     if (this.hp <= 0 && this.ttl > 60) {
                         this.hp = 0;
                         this.ttl = 60;
+                        var ratio = 0;
                         if (direction <= 2) {
+                            ratio = 101;
+                        }
+                        if (direction >= 3 && direction <= 4) {
+                            ratio = 20;
+                        }
+                        if (direction >= 5 && direction <= 6) {
+                            ratio = 5;
+                        }
+                        if (ratio > randInt(1, 100)){
                             createItem(this.x, this.y, 100, heart);
                         }
                         scoreboard.break++;
@@ -525,7 +535,7 @@ const player = Sprite({
                     this.exp = 0;
                     this.maxExp = maxExp[this.lv - 1];
                     this.point++;
-                    if (this.lv == 5){
+                    if (this.lv == 3){
                         putItemCard();
                     }
                 } else {
@@ -688,8 +698,7 @@ function respawnEnemy() {
 let boss_skeleton_flag = true;
 let boss_crab_flag = true;
 let boss_tauren_flag = true;
-let no_skill_flag = true;
-
+let boss_alien_flag = true;
 let low_hp_time = 0;
 
 function intervalHandle() {
@@ -703,15 +712,6 @@ function intervalHandle() {
             showMsg(player.x, player.y, '摧毁火把可以恢复生命值', 600);
             low_hp_time = 0;
         }
-    }
-
-    if (no_skill_flag && player.skill.length > 1){
-        for (let card of cardArr){
-            if (card.type == CARD_TYPE_WEAPON){
-                card.weight -= 0.5;
-            }
-        }
-        no_skill_flag = false;
     }
 
     if (statusBar.m < 3) {
@@ -734,11 +734,14 @@ function intervalHandle() {
     }
     else if (statusBar.m < 12) {
         wave(devil, fox);
-    } else if (statusBar.m < 15) {
+    }
+    else if (boss_alien_flag) {
+        boss_alien_flag = createBoss(boss_alien);
+    }
+    else if (statusBar.m < 15) {
         wave(reaper, reaper);
     }
 }
-
 
 load(
     '/audio/attack_slime.mp3',

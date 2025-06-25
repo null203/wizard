@@ -83,16 +83,16 @@ function handleTouchEnd(event) {
 function keyboard() {
     // 按下方向键或 WASD 键移动
     if (kontra.keyPressed('arrowup') || kontra.keyPressed('w')) {
-        joystick.offsetY -= 10;
+        joystick.offsetY -= 5;
     }
     if (kontra.keyPressed('arrowdown') || kontra.keyPressed('s')) {
-        joystick.offsetY += 10;
+        joystick.offsetY += 5;
     }
     if (kontra.keyPressed('arrowleft') || kontra.keyPressed('a')) {
-        joystick.offsetX -= 10;
+        joystick.offsetX -= 5;
     }
     if (kontra.keyPressed('arrowright') || kontra.keyPressed('d')) {
-        joystick.offsetX += 10;
+        joystick.offsetX += 5;
     }
     if (Math.abs(joystick.offsetX) >= 50) {
         joystick.offsetX = joystick.offsetX > 0 ? 49 : -49;
