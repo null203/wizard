@@ -695,12 +695,6 @@ function respawnEnemy() {
     }
 }
 
-let boss_skeleton_flag = true;
-let boss_crab_flag = true;
-let boss_tauren_flag = true;
-let boss_alien_flag = true;
-let low_hp_time = 0;
-
 function intervalHandle() {
     respawnEnemy();
     player.checkPoint();
@@ -708,7 +702,7 @@ function intervalHandle() {
 
     if (player.hp < player.maxHp / 2) {
         low_hp_time++;
-        if (low_hp_time == 60) {
+        if (low_hp_time >= 60) {
             showMsg(player.x, player.y, '摧毁火把可以恢复生命值', 600);
             low_hp_time = 0;
         }
@@ -717,26 +711,26 @@ function intervalHandle() {
     if (statusBar.m < 3) {
         wave(slime, skeleton);
     }
-    else if (boss_skeleton_flag) {
-        boss_skeleton_flag = createBoss(boss_skeleton);
+    else if (bossFlag.skeleton) {
+        bossFlag.skeleton = createBoss(boss_skeleton);
     }
     else if (statusBar.m < 6) {
         wave(spider, snake);
     }
-    else if (boss_crab_flag) {
-        boss_crab_flag = createBoss(boss_crab);
+    else if (bossFlag.crab) {
+        bossFlag.crab = createBoss(boss_crab);
     }
     else if (statusBar.m < 9) {
         wave(mummy, orc);
     }
-    else if (boss_tauren_flag) {
-        boss_tauren_flag = createBoss(boss_tauren);
+    else if (bossFlag.tauren) {
+        bossFlag.tauren = createBoss(boss_tauren);
     }
     else if (statusBar.m < 12) {
         wave(devil, fox);
     }
-    else if (boss_alien_flag) {
-        boss_alien_flag = createBoss(boss_alien);
+    else if (bossFlag.alien) {
+        bossFlag.alien = createBoss(boss_alien);
     }
     else if (statusBar.m < 15) {
         wave(reaper, reaper);

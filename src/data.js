@@ -42,9 +42,6 @@ const CARD_TYPE_EQUIPMENT = 3;
 const CARD_TYPE_ITEM = 4;
 const CARD_TYPE_SUPER_WEAPON = 5;
 
-let paused = true;
-let intervalId = null;
-
 const pixelSize = 2 * kw;
 const speedFactor = pixelSize / 50;
 const minDistance = 40 * kw;
@@ -106,6 +103,17 @@ const scoreboard = {
         this.receivedDamage = 0;
     }
 };
+
+const bossFlag = {
+    skeleton: true,
+    crab: true,
+    tauren: true,
+    alien: true
+};
+
+let paused = true;
+let intervalId = null;
+let low_hp_time = 0;
 
 const wizard = [
     // left

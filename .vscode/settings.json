@@ -6,6 +6,5 @@
                 "cmd": "npm run build"
             }
         ]
-    },
-    "liveServer.settings.file": "/index-dev.html"
+    }
 }

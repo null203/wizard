@@ -379,6 +379,12 @@ const startDialog = Sprite({
     },
     close() {
         this.show = false;
+        low_hp_time = 0;
+        for (let flag in bossFlag) {
+            if (bossFlag.hasOwnProperty(flag)) {
+                bossFlag[flag] = true;
+            }
+        }
         for (let i = 0; i < enemyCount; i++) {
             createEnemy(slime);
             createEnemy(skeleton);
