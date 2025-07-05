@@ -1,1 +1,1 @@
-var paht = '/wizard';
+var path = '/wizard';
