@@ -94,15 +94,15 @@ const lightning = Sprite({
 const fireball = Sprite({
     x: 0,
     y: 0,
-    width: 12 * kw,
-    height: 12 * kw,
+    width: 16 * kw,
+    height: 16 * kw,
     type: 'skill',
     anchor: { x: 0.5, y: 0.5 },
     ratio: 0,
-    time: 3,
-    cd: 2,
+    time: 2,
+    cd: 0,
     radius: objSize * 8,
-    speed: 180 * kw,
+    speed: 240 * kw,
     particles: Pool({
         maxSize: 170,
         create: Sprite

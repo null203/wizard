@@ -163,23 +163,21 @@ function createEnemy(data) {
                 this.timeCount = 0;
             }
             let acrossFlag = false;
-            for (let otherEnemy of quadtree.get(this)) {
-                if (otherEnemy != player && otherEnemy.isAlive() && isColliding(this, otherEnemy) && otherEnemy.type != 'skill') {
-
-                    let deltaX = this.x - otherEnemy.x;
-                    let deltaY = this.y - otherEnemy.y;
-                    let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-                    if (distance > 0 && distance < minDistance) {
-                        if (otherEnemy.type == 'background') {
-                            acrossFlag = true;
-                            break;
-                        } else {
-                            let unitX = deltaX / distance;
-                            let unitY = deltaY / distance;
-                            let offset = pixelSize * 0.5;
-                            this.x += Math.round(unitX * offset);
-                            this.y += Math.round(unitY * offset);
+            if (this.frameCount % 2 === 0) {
+                for (let otherEnemy of quadtree.get(this)) {
+                    if (otherEnemy != player && otherEnemy.isAlive() && isColliding(this, otherEnemy) && otherEnemy.type != 'skill') {
+                        let dx = this.x - otherEnemy.x;
+                        let dy = this.y - otherEnemy.y;
+                        let dist2 = dx * dx + dy * dy;
+                        if (dist2 > 0 && dist2 < minDistance * minDistance) {
+                            if (otherEnemy.type === 'background') {
+                                acrossFlag = true;
+                                break;
+                            }
+                            const offset = pixelSize * 1.2;
+                            const inv = offset / (Math.abs(dx) + Math.abs(dy));
+                            this.x += (dx * inv) | 0;
+                            this.y += (dy * inv) | 0;
                         }
                     }
                 }
@@ -188,34 +186,32 @@ function createEnemy(data) {
                 // 计算敌人到玩家的方向向量
                 let deltaX = player.x - this.x;
                 let deltaY = player.y - this.y;
-                let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                if (distance < approachDistance) {
-                    // 计算目标方向
-                    let angle = Math.atan2(deltaY, deltaX);
-                    // 计算包围的目标点（可以稍微偏移玩家的位置）
-                    let targetX = player.x + Math.cos(angle + Math.PI / 2) * 30; // 目标点向右偏移
-                    let targetY = player.y + Math.sin(angle + Math.PI / 2) * 30; // 目标点向下偏移
+                let distance = deltaX * deltaX + deltaY * deltaY;
+                if (distance < approachDistance * approachDistance) {
+                    // 计算包围的目标点
+                    let dx = player.x - this.x;
+                    let dy = player.y - this.y;
+                    let inv = 30 / (Math.abs(dx) + Math.abs(dy));
+                    let targetX = player.x - dy * inv;
+                    let targetY = player.y + dx * inv;
                     // 更新敌人位置
                     let targetDeltaX = targetX - this.x;
                     let targetDeltaY = targetY - this.y;
-                    let targetDistance = Math.sqrt(targetDeltaX * targetDeltaX + targetDeltaY * targetDeltaY);
-
-                    if (targetDistance > minDistance) {
-                        let unitX = targetDeltaX / targetDistance;
-                        let unitY = targetDeltaY / targetDistance;
-                        this.dx = Math.round(unitX * this.speed);
-                        this.dy = Math.round(unitY * this.speed);
+                    let targetDist2 = targetDeltaX * targetDeltaX + targetDeltaY * targetDeltaY;
+                    if (targetDist2  > minDistance * minDistance) {
+                        const inv = this.speed / Math.sqrt(targetDist2);
+                        this.dx = targetDeltaX * inv;
+                        this.dy = targetDeltaY * inv;
                     } else {
                         this.dx = 0;
                         this.dy = 0;
                     }
                 } else {
                     // 更新敌人的速度和方向，使其朝向玩家移动
-                    if (distance > minDistance) {
-                        let unitX = deltaX / distance;
-                        let unitY = deltaY / distance;
-                        this.dx = Math.round(unitX * this.speed);
-                        this.dy = Math.round(unitY * this.speed);
+                    if (distance > minDistance * minDistance) {
+                        const inv = this.speed / Math.sqrt(distance);
+                        this.dx = deltaX * inv;
+                        this.dy = deltaY * inv;
                     } else {
                         this.dx = 0;
                         this.dy = 0;
@@ -298,9 +294,8 @@ function createItem(x, y, v, mat) {
             } else {
                 let deltaX = player.x - this.x;
                 let deltaY = player.y - this.y;
-                let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-                if (distance < player.pickupDistance) {
+                let distance = deltaX * deltaX + deltaY * deltaY;
+                if (distance < player.pickupDistance * player.pickupDistance) {
                     this.fly = true;
                 }
             }
@@ -685,8 +680,8 @@ function respawnEnemy() {
     if (enemyPool.getAliveObjects().length == enemyPool.maxSize) {
         for (let enemy of enemyPool.getAliveObjects()) {
             if (!isVisible(enemy) && enemy.type != 'boss') {
-                let distance = Math.sqrt((enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2);
-                if (distance > screenHeight * 0.8) {
+                let distance = (enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2;
+                if (distance > screenHeight * screenHeight * 0.64) {
                     enemy.ttl = 0;
                     enemy.update();
                 }

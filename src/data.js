@@ -43,7 +43,8 @@ const CARD_TYPE_ITEM = 4;
 const CARD_TYPE_SUPER_WEAPON = 5;
 
 const pixelSize = 2 * kw;
-const speedFactor = pixelSize / 50;
+const joystickOuterRadius = 60;
+const speedFactor = pixelSize / joystickOuterRadius;
 const minDistance = 40 * kw;
 const approachDistance = 100 * kw;
 const objSize = bitmapWidth * pixelSize;

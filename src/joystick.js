@@ -94,11 +94,12 @@ function keyboard() {
     if (kontra.keyPressed('arrowright') || kontra.keyPressed('d')) {
         joystick.offsetX += 5;
     }
-    if (Math.abs(joystick.offsetX) >= 50) {
-        joystick.offsetX = joystick.offsetX > 0 ? 49 : -49;
+    let r = joystickOuterRadius - 1;
+    if (Math.abs(joystick.offsetX) >= joystickOuterRadius) {
+        joystick.offsetX = joystick.offsetX > 0 ? r : -r;
     }
-    if (Math.abs(joystick.offsetY) >= 50) {
-        joystick.offsetY = joystick.offsetY > 0 ? 49 : -49;
+    if (Math.abs(joystick.offsetY) >= joystickOuterRadius) {
+        joystick.offsetY = joystick.offsetY > 0 ? r : -r;
     }
     if (joystick.offsetY < 0) {
         if (joystick.offsetX > 0) {
@@ -126,7 +127,7 @@ window.addEventListener('keyup', function (event) {
 const joystick = {
     x: screenWidth / 2,
     y: screenHeight / 1.15,
-    outerRadius: 50,
+    outerRadius: joystickOuterRadius,
     innerRadius: 20,
     touchId: null,
     offsetX: 0,
