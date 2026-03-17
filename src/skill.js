@@ -100,7 +100,7 @@ const fireball = Sprite({
     anchor: { x: 0.5, y: 0.5 },
     ratio: 0,
     time: 2,
-    cd: 0,
+    cd: 1,
     radius: objSize * 8,
     speed: 240 * kw,
     particles: Pool({
@@ -469,31 +469,28 @@ const poisonsmoke = Sprite({
             this.y = player.y;
             let target = null;
             // 搜索目标
-            if (target == null) {
-                let closestDistance = this.distance;
-                for (let enemy of enemyPool.getAliveObjects()) {
-                    let deltaX = enemy.x - player.x;
-                    let deltaY = enemy.y - player.y;
-                    let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                    if (distance < closestDistance) {
-                        closestDistance = distance;
-                        target = {
-                            dx: deltaX,
-                            dy: deltaY,
-                            distance: distance
-                        };
-                    }
-                }
-                // 投掷
-                if (target != null) {
-                    let unitX = target.dx / target.distance;
-                    let unitY = target.dy / target.distance;
-                    this.dx = Math.round(unitX * this.speed);
-                    this.dy = Math.round(unitY * this.speed);
-                    this.fly = true;
+            let closestDistance = this.distance;
+            for (let enemy of enemyPool.getAliveObjects()) {
+                let deltaX = enemy.x - player.x;
+                let deltaY = enemy.y - player.y;
+                let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    target = {
+                        dx: deltaX,
+                        dy: deltaY,
+                        distance: distance
+                    };
                 }
             }
-
+            // 投掷
+            if (target != null) {
+                let unitX = target.dx / target.distance;
+                let unitY = target.dy / target.distance;
+                this.dx = Math.round(unitX * this.speed);
+                this.dy = Math.round(unitY * this.speed);
+                this.fly = true;
+            }
         }
         if (this.fly) {
             for (let enemy of quadtree.get(this)) {
@@ -601,7 +598,7 @@ const axe = Sprite({
     init() {
         this.x = 0;
         this.y = 0;
-        this.ratio = 90;
+        this.ratio = 100;
         this.angle = 0;
         this.active = false;
         this.timeCount = 0;
@@ -615,14 +612,35 @@ const axe = Sprite({
     update(dt) {
         this.timeCount += dt;
         if (!this.active && this.timeCount > this.cd) {
-            this.active = true;
             this.x = player.x;
             this.y = player.y;
             this.startX = this.x;
             this.startY = this.y;
-            this.dx = Math.cos(player.angle) * this.speed;
-            this.dy = Math.sin(player.angle) * this.speed;
-            audioAssets['/audio/skill_axe'].play();
+            let target = null;
+            // 搜索目标
+            let closestDistance = this.distance;
+            for (let enemy of enemyPool.getAliveObjects()) {
+                let deltaX = enemy.x - player.x;
+                let deltaY = enemy.y - player.y;
+                let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    target = {
+                        dx: deltaX,
+                        dy: deltaY,
+                        distance: distance
+                    };
+                }
+            }
+            // 投掷
+            if (target != null) {
+                let unitX = target.dx / target.distance;
+                let unitY = target.dy / target.distance;
+                this.dx = Math.round(unitX * this.speed);
+                this.dy = Math.round(unitY * this.speed);
+                audioAssets['/audio/skill_axe'].play();
+                this.active = true;
+            }
         }
         if (this.active) {
             this.angle -= 15;
