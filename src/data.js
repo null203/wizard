@@ -52,7 +52,7 @@ const enemyAttackRangeTiles = 1;
 const cardLimit = 9;
 
 const worldLimit = 5000 * kw;
-const enemyCount = 16;
+const enemyCount = 4;
 const expRatio = 1.5;
 
 const backgroundArr = [];
@@ -114,7 +114,8 @@ const bossFlag = {
 
 let paused = true;
 let intervalId = null;
-let low_hp_time = 0;
+let lowHpTime = 0;
+let respawnTime = 0;
 
 const wizard = [
     // left
@@ -607,8 +608,8 @@ const reaper = {
 };
 
 const boss_alien = {
-    hp: 200000,
-    atk: 300,
+    hp: 60000,
+    atk: 120,
     def: 25,
     exp: 450000,
     speed: 1,

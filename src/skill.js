@@ -100,7 +100,7 @@ const fireball = Sprite({
     anchor: { x: 0.5, y: 0.5 },
     ratio: 0,
     time: 2,
-    cd: 1,
+    cd: 3,
     radius: objSize * 8,
     speed: 240 * kw,
     particles: Pool({
@@ -131,8 +131,32 @@ const fireball = Sprite({
             this.y = player.y;
             this.particles.clear();
 
-            this.dx = Math.round(Math.cos(player.angle) * this.speed);
-            this.dy = Math.round(Math.sin(player.angle) * this.speed);
+            let target = null;
+            // 搜索目标
+            let closestDistance = this.radius;
+            for (let enemy of enemyPool.getAliveObjects()) {
+                let deltaX = enemy.x - player.x;
+                let deltaY = enemy.y - player.y;
+                let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    target = {
+                        dx: deltaX,
+                        dy: deltaY,
+                        distance: distance
+                    };
+                }
+            }
+            // 发射
+            if (target != null) {
+                let unitX = target.dx / target.distance;
+                let unitY = target.dy / target.distance;
+                this.dx = Math.round(unitX * this.speed);
+                this.dy = Math.round(unitY * this.speed);
+            } else {
+                this.dx = Math.round(Math.cos(player.angle) * this.speed);
+                this.dy = Math.round(Math.sin(player.angle) * this.speed);
+            }
             audioAssets['/audio/skill_fireball'].play();
             this.active = true;
             this.targetArr = [];
@@ -271,16 +295,16 @@ const deathbook = Sprite({
 const lightsaber = kontra.Sprite({
     x: screenWidth / 2,
     y: screenHeight / 2 - objSize * 3,
-    width: 10 * kw,
-    height: 300 * kw,
+    width: 5 * pixelSize,
+    height: 150 * pixelSize,
     ratio: 0,
     preTime: 3,
-    time: 1,
-    cd: 6,
+    time: 0.6,
+    cd: 5,
     angle: Math.PI,
     rotationSpeed: 0.1,
     radius: 0,
-    maxRadius: 60 * kw,
+    maxRadius: 30 * pixelSize,
     op: 1,
     fadeSpeed: 0.015,
     charge: false,

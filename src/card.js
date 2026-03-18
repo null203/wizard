@@ -101,7 +101,7 @@ const card_fireball = {
             `攻击距离: ${fireball.radius / kw}`,
             `持续时间: ${fireball.time}秒`,
             `冷却时间: ${fireball.cd}秒`,
-            `向面朝的方向发射可穿透敌人的火球。`,
+            `发射可穿透敌人的火球。`,
         ];
     },
     getDescription() {
@@ -112,7 +112,7 @@ const card_fireball = {
             `攻击距离: ${fireball.radius / kw}`,
             `持续时间: ${fireball.time}秒`,
             `冷却时间: ${fireball.cd}秒`,
-            `向面朝的方向发射可穿透敌人的火球。`,
+            `发射可穿透敌人的火球。`,
         ];
     },
     remove() {
@@ -229,8 +229,8 @@ const card_lightsaber = {
             `等级: ${this.lv} / ${this.maxLv}`,
             `伤害倍率: ${lightsaber.ratio}%`,
             `攻击距离: ${parseInt(lightsaber.height)}`,
-            `前摇时间: ${lightsaber.preTime}秒`,
-            `持续时间: ${lightsaber.time}秒`,
+            `蓄力时间: ${lightsaber.preTime}秒`,
+            `收尾时间: ${lightsaber.time}秒`,
             `冷却时间: ${lightsaber.cd}秒`,
             `攻击力 + 10`,
             `可发动圣剑解放攻击大量敌人。`,
@@ -242,8 +242,8 @@ const card_lightsaber = {
             `等级: ${this.lv + 1} / ${this.maxLv}`,
             `伤害倍率: ${lightsaber.ratio + (this.lv == 0 ? 0 : this.step)}%`,
             `攻击距离: ${parseInt(lightsaber.height)}`,
-            `前摇时间: ${lightsaber.preTime}秒`,
-            `持续时间: ${lightsaber.time}秒`,
+            `蓄力时间: ${lightsaber.preTime}秒`,
+            `收尾时间: ${lightsaber.time}秒`,
             `冷却时间: ${lightsaber.cd}秒`,
             `攻击力 + 10`,
             `可发动圣剑解放攻击大量敌人。`,

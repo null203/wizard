@@ -379,7 +379,7 @@ const startDialog = Sprite({
     },
     close() {
         this.show = false;
-        low_hp_time = 0;
+        lowHpTime = 0;
         for (let flag in bossFlag) {
             if (bossFlag.hasOwnProperty(flag)) {
                 bossFlag[flag] = true;

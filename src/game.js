@@ -163,7 +163,7 @@ function createEnemy(data) {
                 this.timeCount = 0;
             }
             let acrossFlag = false;
-            if (this.frameCount % 2 === 0) {
+            if (this.frameCount % 10 === 0) {
                 for (let otherEnemy of quadtree.get(this)) {
                     if (otherEnemy != player && otherEnemy.isAlive() && isColliding(this, otherEnemy) && otherEnemy.type != 'skill') {
                         let dx = this.x - otherEnemy.x;
@@ -221,7 +221,7 @@ function createEnemy(data) {
             }
             checkBoundary(this);
             if (acrossFlag) {
-                if (this.frameCount % 3 === 0) {
+                if (this.frameCount % 6 === 0) {
                     this.advance();
                 }
 
@@ -687,19 +687,24 @@ function respawnEnemy() {
                 }
             }
         }
+        respawnTime = 0;
     }
 }
 
 function intervalHandle() {
-    respawnEnemy();
+    if (respawnTime >= 5){
+        respawnEnemy();
+    } else {
+        respawnTime++;
+    }
     player.checkPoint();
     statusBar.update();
 
     if (player.hp < player.maxHp / 2) {
-        low_hp_time++;
-        if (low_hp_time >= 60) {
+        lowHpTime++;
+        if (lowHpTime >= 60) {
             showMsg(player.x, player.y, '摧毁火把可以恢复生命值', 600);
-            low_hp_time = 0;
+            lowHpTime = 0;
         }
     }
 
