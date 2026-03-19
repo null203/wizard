@@ -385,11 +385,9 @@ const startDialog = Sprite({
                 bossFlag[flag] = true;
             }
         }
-        for (let i = 0; i < enemyCount; i++) {
-            createEnemy(slime);
-            createEnemy(skeleton);
-        }
         createBackground();
+        initFlowField();
+        updateFlowField();
         card_lightning.get();
         // card_lightsaber.get();
         // card_fireball.get();
@@ -403,8 +401,6 @@ const startDialog = Sprite({
         // card_magnet.get();
         // card_axe.get();
         // card_lance.get();
-        initFlowField();
-        buildFlowField();
     },
     onUp() {
         closeDialog(this);

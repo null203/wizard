@@ -63,11 +63,14 @@ const dialogArr = [];
 const gridSize = objSize;
 const cols = Math.ceil(worldLimit / gridSize);
 const rows = Math.ceil(worldLimit / gridSize);
-
+const FLOW_RANGE = Math.ceil(screenHeight / gridSize);
+const dirs = [
+    [1, 0], [-1, 0], [0, 1], [0, -1],
+    [1, 1], [-1, -1], [1, -1], [-1, 1]
+];
 let costField = [];
 let integrationField = [];
 let flowField = [];
-
 let flowLastPlayerX = 0;
 let flowLastPlayerY = 0;
 

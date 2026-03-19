@@ -1,49 +1,61 @@
 function initFlowField() {
     costField = Array(rows).fill(0).map(() => Array(cols).fill(1));
     integrationField = Array(rows).fill(0).map(() => Array(cols).fill(Infinity));
-    flowField = Array(rows).fill(0).map(() => Array(cols).fill({ x: 0, y: 0 }));
-}
-
-function buildFlowField() {
-    // cost
+    flowField = Array(rows).fill(0).map(() => Array(cols).fill(null));
     for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
             costField[y][x] = 1;
             integrationField[y][x] = Infinity;
+            flowField[y][x] = null;
         }
     }
-    // 标记障碍
+}
+
+function updateFlowField() {
+
+    let px = (player.x / gridSize) | 0;
+    let py = (player.y / gridSize) | 0;
+
+    let minX = Math.max(0, px - FLOW_RANGE);
+    let maxX = Math.min(cols - 1, px + FLOW_RANGE);
+    let minY = Math.max(0, py - FLOW_RANGE);
+    let maxY = Math.min(rows - 1, py + FLOW_RANGE);
+
+    // costField
+    for (let y = minY; y <= maxY; y++) {
+        for (let x = minX; x <= maxX; x++) {
+            costField[y][x] = 1;
+        }
+    }
     for (let bg of backgroundArr) {
         if (!bg.isAlive()) continue;
 
-        let cx = Math.floor(bg.x / gridSize);
-        let cy = Math.floor(bg.y / gridSize);
+        let cx = (bg.x / gridSize) | 0;
+        let cy = (bg.y / gridSize) | 0;
 
-        if (cx >= 0 && cy >= 0 && cx < cols && cy < rows) {
+        if (cx >= minX && cx <= maxX && cy >= minY && cy <= maxY) {
             costField[cy][cx] = 50;
+        }
+    }
+    // 局部清空
+    for (let y = minY; y <= maxY; y++) {
+        for (let x = minX; x <= maxX; x++) {
+            integrationField[y][x] = Infinity;
         }
     }
     // BFS
     let queue = [];
-    let px = Math.floor(player.x / gridSize);
-    let py = Math.floor(player.y / gridSize);
     integrationField[py][px] = 0;
     queue.push([px, py]);
-    const dirs = [
-        [1, 0], [-1, 0], [0, 1], [0, -1],
-        [1, 1], [-1, -1], [1, -1], [-1, 1]
-    ];
     while (queue.length > 0) {
         let [x, y] = queue.shift();
-
+        if (x < minX || x > maxX || y < minY || y > maxY) continue;
+        let base = integrationField[y][x];
         for (let [dx, dy] of dirs) {
             let nx = x + dx;
             let ny = y + dy;
-
-            if (nx >= 0 && ny >= 0 && nx < cols && ny < rows) {
-                let cost = costField[ny][nx];
-                let newCost = integrationField[y][x] + cost;
-
+            if (nx >= minX && nx <= maxX && ny >= minY && ny <= maxY) {
+                let newCost = base + costField[ny][nx];
                 if (newCost < integrationField[ny][nx]) {
                     integrationField[ny][nx] = newCost;
                     queue.push([nx, ny]);
@@ -51,13 +63,15 @@ function buildFlowField() {
             }
         }
     }
-    // 生成方向
-    for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-
+    // flowField
+    for (let y = minY; y <= maxY; y++) {
+        for (let x = minX; x <= maxX; x++) {
             let best = integrationField[y][x];
-            let bestDir = { x: 0, y: 0 };
-
+            let bestDir = null;
+            if (best === Infinity) {
+                flowField[y][x] = null;
+                continue;
+            }
             for (let [dx, dy] of dirs) {
                 let nx = x + dx;
                 let ny = y + dy;
@@ -69,7 +83,6 @@ function buildFlowField() {
                     }
                 }
             }
-
             flowField[y][x] = bestDir;
         }
     }
@@ -92,6 +105,7 @@ function createBackground() {
             let hp = 0;
             let maxHp = 0;
             let def = 0;
+            let dr = 0;
             if (direction <= 2) {
                 hp = 100;
                 maxHp = 100;
@@ -99,17 +113,20 @@ function createBackground() {
             if (direction >= 3 && direction <= 4) {
                 hp = 100;
                 maxHp = 100;
-                def = 100;
+                def = 120;
+                dr = 0.35;
             }
             if (direction >= 5 && direction <= 6) {
                 hp = 100;
                 maxHp = 100;
-                def = 70;
+                def = 90;
+                dr = 0.2;
             }
             backgroundArr.push(Sprite({
                 hp: hp,
                 maxHp: maxHp,
                 def: def,
+                dr: dr,
                 x: point.x,
                 y: point.y,
                 width: objSize,
@@ -118,6 +135,14 @@ function createBackground() {
                 type: 'background',
                 direction: direction,
                 frameCount: 0,
+                underAttack(damage) {
+                    damage = damage * (1 - this.dr);
+                    if (damage < 1) {
+                        damage = 1;
+                    }
+                    this.hp = this.hp - damage;
+                    return damage;
+                },
                 isAlive: function () {
                     return this.hp > 0 && this.ttl > 60;
                 },
@@ -148,7 +173,7 @@ function createBackground() {
                         if (this.direction >= 5 && this.direction <= 6) {
                             ratio = 5;
                         }
-                        if (ratio > randInt(1, 100)){
+                        if (ratio > randInt(1, 100)) {
                             createItem(this.x, this.y, 100, heart);
                         }
                         scoreboard.break++;
@@ -211,6 +236,13 @@ function createEnemy(data) {
             showDamage(player.x, player.y, damage, 1);
             scoreboard.receivedDamage += damage;
         },
+        underAttack(damage) {
+            if (damage < 1) {
+                damage = 1;
+            }
+            this.hp = this.hp - damage;
+            return damage;
+        },
         isAlive() {
             return this.ttl > 0;
         },
@@ -243,12 +275,14 @@ function createEnemy(data) {
             let cx = Math.floor(this.x / gridSize);
             let cy = Math.floor(this.y / gridSize);
             let dir = flowField[cy]?.[cx];
+            let dx = 0;
+            let dy = 0;
             if (dir) {
+                dx = dir.x;
+                dy = dir.y;
                 let deltaX = player.x - this.x;
                 let deltaY = player.y - this.y;
                 let dist2 = deltaX * deltaX + deltaY * deltaY;
-                let dx = dir.x;
-                let dy = dir.y;
                 if (dist2 < approachDistance * approachDistance) {
                     let len = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
                     if (len > 0) {
@@ -269,39 +303,47 @@ function createEnemy(data) {
                         }
                     }
                 }
-                // 防重叠
-                for (let other of quadtree.get(this)) {
-                    if (other === this) continue;
-                    if (other.type !== 'enemy') continue;
-                    if (!other.isAlive()) continue;
-                    let dx = this.x - other.x;
-                    let dy = this.y - other.y;
-                    let dist2 = dx * dx + dy * dy;
-                    if (dist2 === 0) continue;
-                    let minDist = (this.width + other.width) * 0.5;
-                    if (dist2 < minDist * minDist) {
-                        let dist = Math.sqrt(dist2);
-                        let overlap = (minDist - dist) * 0.5;
-                        let nx = dx / dist;
-                        let ny = dy / dist;
-                        // 双方各退一半
-                        this.x += nx * overlap;
-                        this.y += ny * overlap;
-                        other.x -= nx * overlap;
-                        other.y -= ny * overlap;
-                    }
-                }
-                // 归一化速度
-                let len = Math.sqrt(dx * dx + dy * dy);
+            } else {
+                let tx = player.x - this.x;
+                let ty = player.y - this.y;
+                let len = Math.sqrt(tx * tx + ty * ty);
                 if (len > 0) {
-                    this.dx = (dx / len) * this.speed;
-                    this.dy = (dy / len) * this.speed;
-                } else {
-                    this.dx = 0;
-                    this.dy = 0;
+                    dx = tx / len;
+                    dy = ty / len;
                 }
-                setDirection(this, deltaX, deltaY);
             }
+            // 防重叠
+            for (let other of quadtree.get(this)) {
+                if (other === this) continue;
+                if (other.type !== 'enemy') continue;
+                if (!other.isAlive()) continue;
+                let ux = this.x - other.x;
+                let uy = this.y - other.y;
+                let dist2 = ux * ux + uy * uy;
+                if (dist2 === 0) continue;
+                let minDist = (this.width + other.width) * 0.5;
+                if (dist2 < minDist * minDist) {
+                    let dist = Math.sqrt(dist2);
+                    let overlap = (minDist - dist) * 0.5;
+                    let nx = ux / dist;
+                    let ny = uy / dist;
+                    // 双方各退一半
+                    this.x += nx * overlap;
+                    this.y += ny * overlap;
+                    other.x -= nx * overlap;
+                    other.y -= ny * overlap;
+                }
+            }
+            // 归一化速度
+            let len = Math.sqrt(dx * dx + dy * dy);
+            if (len > 0) {
+                this.dx = (dx / len) * this.speed;
+                this.dy = (dy / len) * this.speed;
+            } else {
+                this.dx = 0;
+                this.dy = 0;
+            }
+            setDirection(this, this.dx, this.dy);
             this.advance();
         },
         render() {
@@ -563,8 +605,8 @@ const player = Sprite({
     point: 0,
     pickupDistance: 50 * kw,
     angle: 0,
-    lastDx : 0,
-    lastDy : 0,
+    lastDx: 0,
+    lastDy: 0,
     init() {
         this.x = playerData.x;
         this.y = playerData.y;
@@ -602,7 +644,7 @@ const player = Sprite({
                     this.exp = 0;
                     this.maxExp = maxExp[this.lv - 1];
                     this.point++;
-                    if (this.lv == 3){
+                    if (this.lv == 3) {
                         putItemCard();
                     }
                 } else {
@@ -624,10 +666,7 @@ const player = Sprite({
     attack(enemy, ratio) {
         const critFlg = this.crit > randInt(1, 100) ? 2 : 1;
         let damage = Math.floor((this.atk - enemy.def) * (ratio / 100)) * critFlg;
-        if (damage < 1) {
-            damage = 1;
-        }
-        enemy.hp = enemy.hp - damage;
+        damage = enemy.underAttack(damage);
         showDamage(enemy.x, enemy.y, damage, critFlg);
         scoreboard.damage += damage;
     },
@@ -661,7 +700,7 @@ const player = Sprite({
         }
         this.dx = Math.round(joystick.offsetX * speedFactor);
         this.dy = Math.round(joystick.offsetY * speedFactor);
-        if (this.dx != 0 || this.dy != 0){
+        if (this.dx != 0 || this.dy != 0) {
             this.angle = Math.atan2(this.dy, this.dx);
         }
         this.lastDx = this.dx != 0 ? this.dx : this.lastDx;
@@ -688,8 +727,8 @@ const loop = GameLoop({
 
         let dx = player.x - flowLastPlayerX;
         let dy = player.y - flowLastPlayerY;
-        if (dx * dx + dy * dy > gridSize * gridSize) {
-            buildFlowField();
+        if (dx * dx + dy * dy > approachDistance * approachDistance) {
+            updateFlowField();
         }
         player.update(dt);
         enemyPool.update(dt);
@@ -769,7 +808,7 @@ function respawnEnemy() {
 }
 
 function intervalHandle() {
-    if (respawnTime >= 5){
+    if (respawnTime >= 5) {
         respawnEnemy();
     } else {
         respawnTime++;
@@ -834,7 +873,7 @@ load(
     '/audio/skill_lance.mp3',
     '/audio/level_up.mp3'
 ).then(function () {
-    document.fonts.load(`12px ${fontFamily}`).then(function() {
+    document.fonts.load(`12px ${fontFamily}`).then(function () {
         loadDialog.assetsLoaded++;
         canvas.addEventListener('touchstart', handleTouchStart);
         canvas.addEventListener('touchmove', handleTouchMove);

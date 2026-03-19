@@ -153,3 +153,48 @@ function doesLineIntersectRect(startX, startY, endX, endY, rect) {
         linesIntersect(startX, startY, endX, endY, bottomLeft.x, bottomLeft.y, topLeft.x, topLeft.y)
     );
 }
+
+function heapPush(heap, node) {
+    heap.push(node);
+    let i = heap.length - 1;
+
+    while (i > 0) {
+        let p = (i - 1) >> 1;
+        if (heap[p].cost <= heap[i].cost) break;
+
+        let tmp = heap[p];
+        heap[p] = heap[i];
+        heap[i] = tmp;
+
+        i = p;
+    }
+}
+
+function heapPop(heap) {
+    if (heap.length === 1) return heap.pop();
+
+    let top = heap[0];
+    heap[0] = heap.pop();
+
+    let i = 0;
+    let n = heap.length;
+
+    while (true) {
+        let l = i * 2 + 1;
+        let r = i * 2 + 2;
+        let smallest = i;
+
+        if (l < n && heap[l].cost < heap[smallest].cost) smallest = l;
+        if (r < n && heap[r].cost < heap[smallest].cost) smallest = r;
+
+        if (smallest === i) break;
+
+        let tmp = heap[i];
+        heap[i] = heap[smallest];
+        heap[smallest] = tmp;
+
+        i = smallest;
+    }
+
+    return top;
+}
