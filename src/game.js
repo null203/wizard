@@ -136,7 +136,7 @@ function createBackground() {
                 direction: direction,
                 frameCount: 0,
                 underAttack(damage) {
-                    damage = damage * (1 - this.dr);
+                    damage = Math.floor(damage * (1 - this.dr));
                     if (damage < 1) {
                         damage = 1;
                     }
