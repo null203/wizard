@@ -403,6 +403,8 @@ const startDialog = Sprite({
         // card_magnet.get();
         // card_axe.get();
         // card_lance.get();
+        initFlowField();
+        buildFlowField();
     },
     onUp() {
         closeDialog(this);

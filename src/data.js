@@ -60,6 +60,17 @@ const skillArr = [];
 const cardArr = [];
 const dialogArr = [];
 
+const gridSize = objSize;
+const cols = Math.ceil(worldLimit / gridSize);
+const rows = Math.ceil(worldLimit / gridSize);
+
+let costField = [];
+let integrationField = [];
+let flowField = [];
+
+let flowLastPlayerX = 0;
+let flowLastPlayerY = 0;
+
 const enemyPool = Pool({
     maxSize: 50,
     create: Sprite

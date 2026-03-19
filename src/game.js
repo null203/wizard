@@ -1,3 +1,82 @@
+function initFlowField() {
+    costField = Array(rows).fill(0).map(() => Array(cols).fill(1));
+    integrationField = Array(rows).fill(0).map(() => Array(cols).fill(Infinity));
+    flowField = Array(rows).fill(0).map(() => Array(cols).fill({ x: 0, y: 0 }));
+}
+
+function buildFlowField() {
+    // cost
+    for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+            costField[y][x] = 1;
+            integrationField[y][x] = Infinity;
+        }
+    }
+    // 标记障碍
+    for (let bg of backgroundArr) {
+        if (!bg.isAlive()) continue;
+
+        let cx = Math.floor(bg.x / gridSize);
+        let cy = Math.floor(bg.y / gridSize);
+
+        if (cx >= 0 && cy >= 0 && cx < cols && cy < rows) {
+            costField[cy][cx] = 50;
+        }
+    }
+    // BFS
+    let queue = [];
+    let px = Math.floor(player.x / gridSize);
+    let py = Math.floor(player.y / gridSize);
+    integrationField[py][px] = 0;
+    queue.push([px, py]);
+    const dirs = [
+        [1, 0], [-1, 0], [0, 1], [0, -1],
+        [1, 1], [-1, -1], [1, -1], [-1, 1]
+    ];
+    while (queue.length > 0) {
+        let [x, y] = queue.shift();
+
+        for (let [dx, dy] of dirs) {
+            let nx = x + dx;
+            let ny = y + dy;
+
+            if (nx >= 0 && ny >= 0 && nx < cols && ny < rows) {
+                let cost = costField[ny][nx];
+                let newCost = integrationField[y][x] + cost;
+
+                if (newCost < integrationField[ny][nx]) {
+                    integrationField[ny][nx] = newCost;
+                    queue.push([nx, ny]);
+                }
+            }
+        }
+    }
+    // 生成方向
+    for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+
+            let best = integrationField[y][x];
+            let bestDir = { x: 0, y: 0 };
+
+            for (let [dx, dy] of dirs) {
+                let nx = x + dx;
+                let ny = y + dy;
+
+                if (nx >= 0 && ny >= 0 && nx < cols && ny < rows) {
+                    if (integrationField[ny][nx] < best) {
+                        best = integrationField[ny][nx];
+                        bestDir = { x: dx, y: dy };
+                    }
+                }
+            }
+
+            flowField[y][x] = bestDir;
+        }
+    }
+    flowLastPlayerX = player.x;
+    flowLastPlayerY = player.y;
+}
+
 function createBackground() {
     let points = generatePoints();
     for (let point of points) {
@@ -60,13 +139,13 @@ function createBackground() {
                         this.hp = 0;
                         this.ttl = 60;
                         var ratio = 0;
-                        if (direction <= 2) {
+                        if (this.direction <= 2) {
                             ratio = 101;
                         }
-                        if (direction >= 3 && direction <= 4) {
+                        if (this.direction >= 3 && this.direction <= 4) {
                             ratio = 20;
                         }
-                        if (direction >= 5 && direction <= 6) {
+                        if (this.direction >= 5 && this.direction <= 6) {
                             ratio = 5;
                         }
                         if (ratio > randInt(1, 100)){
@@ -74,7 +153,7 @@ function createBackground() {
                         }
                         scoreboard.break++;
                     }
-                    if (this.hp < this.maxHp && this.frameCount % 60 == 0) {
+                    if (this.hp < this.maxHp && randInt(1, 100) <= 2) {
                         this.hp++;
                         if (this.hp == this.maxHp) {
                             this.ttl = Infinity;
@@ -116,7 +195,6 @@ function createEnemy(data) {
         type: data.isBoss ? 'boss' : 'enemy',
         direction: LEFT,
         speed: (data.speed ? data.speed : speed) * kw,
-        frameCount: 0,
         timeCount: 0,
         ttl: Infinity,
         isDead: false,
@@ -137,7 +215,6 @@ function createEnemy(data) {
             return this.ttl > 0;
         },
         update(dt) {
-            this.frameCount++;
             if (this.ttl > 0) {
                 this.ttl--;
             }
@@ -162,75 +239,70 @@ function createEnemy(data) {
                 }
                 this.timeCount = 0;
             }
-            let acrossFlag = false;
-            if (this.frameCount % 10 === 0) {
-                for (let otherEnemy of quadtree.get(this)) {
-                    if (otherEnemy != player && otherEnemy.isAlive() && isColliding(this, otherEnemy) && otherEnemy.type != 'skill') {
-                        let dx = this.x - otherEnemy.x;
-                        let dy = this.y - otherEnemy.y;
-                        let dist2 = dx * dx + dy * dy;
-                        if (dist2 > 0 && dist2 < minDistance * minDistance) {
-                            if (otherEnemy.type === 'background') {
-                                acrossFlag = true;
-                                break;
-                            }
-                            const offset = pixelSize * 1.2;
-                            const inv = offset / (Math.abs(dx) + Math.abs(dy));
-                            this.x += (dx * inv) | 0;
-                            this.y += (dy * inv) | 0;
+            // 寻路
+            let cx = Math.floor(this.x / gridSize);
+            let cy = Math.floor(this.y / gridSize);
+            let dir = flowField[cy]?.[cx];
+            if (dir) {
+                let deltaX = player.x - this.x;
+                let deltaY = player.y - this.y;
+                let dist2 = deltaX * deltaX + deltaY * deltaY;
+                let dx = dir.x;
+                let dy = dir.y;
+                if (dist2 < approachDistance * approachDistance) {
+                    let len = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                    if (len > 0) {
+                        let ux = deltaX / len;
+                        let uy = deltaY / len;
+                        let inv = 30 / (Math.abs(ux) + Math.abs(uy));
+                        let targetX = player.x - dy * inv;
+                        let targetY = player.y + dx * inv;
+                        let tx = targetX - this.x;
+                        let ty = targetY - this.y;
+                        let tlen = Math.sqrt(tx * tx + ty * ty);
+                        if (tlen > minDistance) {
+                            dx = tx / tlen;
+                            dy = ty / tlen;
+                        } else {
+                            dx = 0;
+                            dy = 0;
                         }
                     }
                 }
-            }
-            if (this.frameCount % 30 === 0) {
-                // 计算敌人到玩家的方向向量
-                let deltaX = player.x - this.x;
-                let deltaY = player.y - this.y;
-                let distance = deltaX * deltaX + deltaY * deltaY;
-                if (distance < approachDistance * approachDistance) {
-                    // 计算包围的目标点
-                    let dx = player.x - this.x;
-                    let dy = player.y - this.y;
-                    let inv = 30 / (Math.abs(dx) + Math.abs(dy));
-                    let targetX = player.x - dy * inv;
-                    let targetY = player.y + dx * inv;
-                    // 更新敌人位置
-                    let targetDeltaX = targetX - this.x;
-                    let targetDeltaY = targetY - this.y;
-                    let targetDist2 = targetDeltaX * targetDeltaX + targetDeltaY * targetDeltaY;
-                    if (targetDist2  > minDistance * minDistance) {
-                        const inv = this.speed / Math.sqrt(targetDist2);
-                        this.dx = targetDeltaX * inv;
-                        this.dy = targetDeltaY * inv;
-                    } else {
-                        this.dx = 0;
-                        this.dy = 0;
+                // 防重叠
+                for (let other of quadtree.get(this)) {
+                    if (other === this) continue;
+                    if (other.type !== 'enemy') continue;
+                    if (!other.isAlive()) continue;
+                    let dx = this.x - other.x;
+                    let dy = this.y - other.y;
+                    let dist2 = dx * dx + dy * dy;
+                    if (dist2 === 0) continue;
+                    let minDist = (this.width + other.width) * 0.5;
+                    if (dist2 < minDist * minDist) {
+                        let dist = Math.sqrt(dist2);
+                        let overlap = (minDist - dist) * 0.5;
+                        let nx = dx / dist;
+                        let ny = dy / dist;
+                        // 双方各退一半
+                        this.x += nx * overlap;
+                        this.y += ny * overlap;
+                        other.x -= nx * overlap;
+                        other.y -= ny * overlap;
                     }
+                }
+                // 归一化速度
+                let len = Math.sqrt(dx * dx + dy * dy);
+                if (len > 0) {
+                    this.dx = (dx / len) * this.speed;
+                    this.dy = (dy / len) * this.speed;
                 } else {
-                    // 更新敌人的速度和方向，使其朝向玩家移动
-                    if (distance > minDistance * minDistance) {
-                        const inv = this.speed / Math.sqrt(distance);
-                        this.dx = deltaX * inv;
-                        this.dy = deltaY * inv;
-                    } else {
-                        this.dx = 0;
-                        this.dy = 0;
-                    }
+                    this.dx = 0;
+                    this.dy = 0;
                 }
                 setDirection(this, deltaX, deltaY);
             }
-            checkBoundary(this);
-            if (acrossFlag) {
-                if (this.frameCount % 6 === 0) {
-                    this.advance();
-                }
-
-            } else {
-                this.advance();
-            }
-            if (this.frameCount > 30000) {
-                this.frameCount = 0;
-            }
+            this.advance();
         },
         render() {
             if (isVisible(this)) {
@@ -570,12 +642,12 @@ const player = Sprite({
             if (obj.type == 'background' && obj.isAlive() && isColliding(this, obj)) {
                 let deltaX = this.x - obj.x;
                 let deltaY = this.y - obj.y;
-                let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-                if (distance > 0) {
-                    let unitX = deltaX / distance;
-                    let unitY = deltaY / distance;
-                    let offset = pixelSize;
+                let distance = deltaX * deltaX + deltaY * deltaY;
+                if (distance > pixelSize * pixelSize) {
+                    let d = Math.sqrt(distance);
+                    let unitX = deltaX / d;
+                    let unitY = deltaY / d;
+                    let offset = pixelSize / 2;
                     this.x += Math.round(unitX * offset);
                     this.y += Math.round(unitY * offset);
                     break;
@@ -614,6 +686,11 @@ const loop = GameLoop({
         quadtree.clear();
         quadtree.add(player, enemyPool.getAliveObjects(), backgroundArr, fireball, deathbook, poisonsmoke, axe, lance);
 
+        let dx = player.x - flowLastPlayerX;
+        let dy = player.y - flowLastPlayerY;
+        if (dx * dx + dy * dy > gridSize * gridSize) {
+            buildFlowField();
+        }
         player.update(dt);
         enemyPool.update(dt);
         itemPool.update(dt);
@@ -703,7 +780,7 @@ function intervalHandle() {
     if (player.hp < player.maxHp / 2) {
         lowHpTime++;
         if (lowHpTime >= 60) {
-            showMsg(player.x, player.y, '摧毁火把可以恢复生命值', 600);
+            showMsg(player.x, player.y, '摧毁火把可以恢复生命值', 800);
             lowHpTime = 0;
         }
     }
