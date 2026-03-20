@@ -344,6 +344,7 @@ function createEnemy(data) {
                 this.dy = 0;
             }
             setDirection(this, this.dx, this.dy);
+            checkBoundary(this);
             this.advance();
         },
         render() {
@@ -772,16 +773,16 @@ const loop = GameLoop({
 });
 
 function createBoss(boss) {
-    let flag = !createEnemy(boss);
-    if (flag) {
+    let boss = createEnemy(boss);
+    if (boss == null) {
         for (let enemy of enemyPool.getAliveObjects()) {
             if (!isVisible(enemy)) {
                 enemy.ttl = 0;
-                return !createEnemy(boss);
+                return createEnemy(boss);
             }
         }
     }
-    return flag;
+    return boss;
 }
 
 function wave(...args) {
@@ -827,29 +828,35 @@ function intervalHandle() {
     if (statusBar.m < 3) {
         wave(slime, skeleton);
     }
-    else if (bossFlag.skeleton) {
-        bossFlag.skeleton = createBoss(boss_skeleton);
+    else if (boss.skeleton == null) {
+        boss.skeleton = createBoss(boss_skeleton);
     }
     else if (statusBar.m < 6) {
         wave(spider, snake);
     }
-    else if (bossFlag.crab) {
-        bossFlag.crab = createBoss(boss_crab);
+    else if (boss.crab == null) {
+        boss.crab = createBoss(boss_crab);
     }
     else if (statusBar.m < 9) {
         wave(mummy, orc);
     }
-    else if (bossFlag.tauren) {
-        bossFlag.tauren = createBoss(boss_tauren);
+    else if (boss.tauren == null) {
+        boss.tauren = createBoss(boss_tauren);
     }
     else if (statusBar.m < 12) {
         wave(devil, fox);
     }
-    else if (bossFlag.alien) {
-        bossFlag.alien = createBoss(boss_alien);
+    else if (boss.alien == null) {
+        boss.alien = createBoss(boss_alien);
     }
     else if (statusBar.m < 15) {
         wave(reaper, reaper);
+    } else if (!boss.skeleton.isAlive()
+        && !boss.crab.isAlive()
+        && !boss.tauren.isAlive()
+        && !boss.alien.isAlive()
+    ) {
+        openDialog(gameOverDialog);
     }
 }
 

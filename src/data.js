@@ -119,11 +119,11 @@ const scoreboard = {
     }
 };
 
-const bossFlag = {
-    skeleton: true,
-    crab: true,
-    tauren: true,
-    alien: true
+const boss = {
+    skeleton: null,
+    crab: null,
+    tauren: null,
+    alien: null
 };
 
 let paused = true;

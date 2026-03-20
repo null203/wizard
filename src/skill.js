@@ -10,6 +10,25 @@ function multiDamageDetection(obj, enemy) {
         && !isExists(obj.targetArr, enemy);
 }
 
+function searchEnemy(closestDistance) {
+    let target = null;
+    for (let enemy of enemyPool.getAliveObjects()) {
+        let deltaX = enemy.x - player.x;
+        let deltaY = enemy.y - player.y;
+        let dist2 = deltaX * deltaX + deltaY * deltaY;
+        if (dist2 < closestDistance * closestDistance) {
+            closestDistance = Math.sqrt(dist2);
+            target = {
+                dx: deltaX,
+                dy: deltaY,
+                distance: closestDistance,
+                enemy : enemy
+            };
+        }
+    }
+    return target;
+}
+
 const lightning = Sprite({
     x: 0,
     y: 0,
@@ -33,18 +52,12 @@ const lightning = Sprite({
             this.target = null;
         }
         if (this.timeCount > this.cd) {
-            // 搜索目标
             if (this.target == null) {
-                let closestDistance = this.radius;
-                for (let enemy of enemyPool.getAliveObjects()) {
-                    const distance = Math.sqrt((enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2);
-                    if (distance < closestDistance) {
-                        closestDistance = distance;
-                        this.target = enemy;
-                    }
-                }
+                // 搜索目标
+                this.target = searchEnemy(this.radius);
                 // 发动攻击
                 if (this.target != null) {
+                    this.target = this.target.enemy;
                     audioAssets['/audio/skill_lightning'].play();
                     player.attack(this.target, this.ratio);
                 }
@@ -130,23 +143,8 @@ const fireball = Sprite({
             this.x = player.x;
             this.y = player.y;
             this.particles.clear();
-
-            let target = null;
             // 搜索目标
-            let closestDistance = this.radius;
-            for (let enemy of enemyPool.getAliveObjects()) {
-                let deltaX = enemy.x - player.x;
-                let deltaY = enemy.y - player.y;
-                let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                if (distance < closestDistance) {
-                    closestDistance = distance;
-                    target = {
-                        dx: deltaX,
-                        dy: deltaY,
-                        distance: distance
-                    };
-                }
-            }
+            let target = searchEnemy(this.radius);
             // 发射
             if (target != null) {
                 let unitX = target.dx / target.distance;
@@ -296,7 +294,7 @@ const lightsaber = kontra.Sprite({
     x: screenWidth / 2,
     y: screenHeight / 2 - objSize * 3,
     width: 5 * pixelSize,
-    height: 150 * pixelSize,
+    height: 180 * pixelSize,
     ratio: 0,
     preTime: 3,
     time: 0.6,
@@ -491,22 +489,8 @@ const poisonsmoke = Sprite({
         if (!this.fly && !this.active && this.timeCount > this.cd) {
             this.x = player.x;
             this.y = player.y;
-            let target = null;
             // 搜索目标
-            let closestDistance = this.distance;
-            for (let enemy of enemyPool.getAliveObjects()) {
-                let deltaX = enemy.x - player.x;
-                let deltaY = enemy.y - player.y;
-                let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                if (distance < closestDistance) {
-                    closestDistance = distance;
-                    target = {
-                        dx: deltaX,
-                        dy: deltaY,
-                        distance: distance
-                    };
-                }
-            }
+            let target = searchEnemy(this.distance);
             // 投掷
             if (target != null) {
                 let unitX = target.dx / target.distance;
@@ -640,22 +624,8 @@ const axe = Sprite({
             this.y = player.y;
             this.startX = this.x;
             this.startY = this.y;
-            let target = null;
             // 搜索目标
-            let closestDistance = this.distance;
-            for (let enemy of enemyPool.getAliveObjects()) {
-                let deltaX = enemy.x - player.x;
-                let deltaY = enemy.y - player.y;
-                let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                if (distance < closestDistance) {
-                    closestDistance = distance;
-                    target = {
-                        dx: deltaX,
-                        dy: deltaY,
-                        distance: distance
-                    };
-                }
-            }
+            let target = searchEnemy(this.distance);
             // 投掷
             if (target != null) {
                 let unitX = target.dx / target.distance;
@@ -749,7 +719,13 @@ const lance = Sprite({
         this.timeCount += dt;
         if (!this.active && this.timeCount > this.cd) {
             this.active = true;
-            this.playerLastDx = player.lastDx > 0 ? 10 : -10;
+            // 搜索目标
+            let target = searchEnemy(this.width * 1.2);
+            if (target != null) {
+                this.playerLastDx = target.dx > 0 ? 10 : -10;
+            } else {
+                this.playerLastDx = player.lastDx > 0 ? 10 : -10;
+            }
             audioAssets['/audio/skill_lance'].play();
         }
         if (this.active) {

@@ -285,7 +285,7 @@ const card_shield = {
     lv: 0,
     type: CARD_TYPE_EQUIPMENT,
     maxLv: 5,
-    name: '钢盾',
+    name: '大盾',
     width: objSize * 2,
     height: objSize * 2,
     def: 10,
@@ -396,7 +396,7 @@ const card_hp_medicine = {
     name: '生命药水',
     width: objSize * 2,
     height: objSize * 2,
-    hp: 20,
+    hp: 25,
     weight: 1,
     getDetail() {
         return [
@@ -578,7 +578,8 @@ const card_necklace = {
     name: '宝石项链',
     width: objSize * 2,
     height: objSize * 2,
-    step: 1,
+    step: 2,
+    hp: 5,
     weight: 1,
     getDetail() {
         return [
@@ -586,7 +587,7 @@ const card_necklace = {
             `等级: ${this.lv} / ${this.maxLv}`,
             `攻击力 + ${(this.lv - 1) * this.step + 2}`,
             `防御力 + ${(this.lv - 1) * this.step + 2}`,
-            `最大生命值 + ${(this.lv - 1) * this.step + 10}`,
+            `最大生命值 + ${(this.lv - 1) * this.hp + 10}`,
         ];
     },
     getDescription() {
@@ -595,14 +596,14 @@ const card_necklace = {
             `等级: ${this.lv + 1} / ${this.maxLv}`,
             `攻击力 + ${this.lv * this.step + 2}`,
             `防御力 + ${this.lv * this.step + 2}`,
-            `最大生命值 + ${this.lv * this.step + 10}`,
+            `最大生命值 + ${this.lv * this.hp + 10}`,
         ];
     },
     remove() {
         removeFromArr(cardArr, this);
         player.atk -= (2 + (this.lv - 1) * this.step);
         player.def -= (2 + (this.lv - 1) * this.step);
-        player.hp -= (10 + (this.lv - 1) * this.step);
+        player.hp -= (10 + (this.lv - 1) * this.hp);
     },
     get() {
         this.lv++;
@@ -619,7 +620,7 @@ const card_necklace = {
     levelUp() {
         player.atk += this.step;
         player.def += this.step;
-        player.maxHp += this.step;
+        player.maxHp += this.hp;
         if (this.lv == this.maxLv) {
             removeFromArr(cardArr, this);
         }
