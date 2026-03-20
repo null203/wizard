@@ -401,6 +401,7 @@ const startDialog = Sprite({
         // card_magnet.get();
         // card_axe.get();
         // card_lance.get();
+        // card_small_shield.get();
     },
     onUp() {
         closeDialog(this);

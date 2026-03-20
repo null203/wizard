@@ -224,7 +224,14 @@ function createEnemy(data) {
         ttl: Infinity,
         isDead: false,
         attack() {
-            let damage = Math.floor(this.atk - player.def);
+            let damage = 0;
+            if (isExists(player.cards, card_small_shield)
+                && card_small_shield.block > randInt(1, 100)) {
+                audioAssets['/audio/skill_block'].play();
+                showMsg(player.x, player.y, '格挡');
+                return;
+            }
+            damage = Math.floor(this.atk - player.def);
             if (damage < 1) {
                 damage = 1;
             }
@@ -258,7 +265,7 @@ function createEnemy(data) {
                 this.ttl = 60;
                 this.isDead = true;
                 scoreboard.kill++;
-                if (this.type == 'boss'){
+                if (this.type == 'boss') {
                     scoreboard.bossKill++;
                 }
                 return;
@@ -877,6 +884,7 @@ load(
     '/audio/skill_lightsaber2.mp3',
     '/audio/skill_poison.mp3',
     '/audio/skill_axe.mp3',
+    '/audio/skill_block.mp3',
     '/audio/skill_lance.mp3',
     '/audio/level_up.mp3'
 ).then(function () {
@@ -889,7 +897,7 @@ load(
 });
 
 
-loadDialog.numAssets = 19;
+loadDialog.numAssets = 20;
 loadDialog.assetsLoaded = 0;
 on('assetLoaded', function () {
     loadDialog.assetsLoaded++;

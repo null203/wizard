@@ -333,6 +333,66 @@ const card_shield = {
     ]
 };
 
+const card_small_shield = {
+    x: 0,
+    y: 0,
+    lv: 0,
+    type: CARD_TYPE_EQUIPMENT,
+    maxLv: 5,
+    name: '小圆盾',
+    width: objSize * 2,
+    height: objSize * 2,
+    def: 8,
+    step: 2,
+    block: 17,
+    weight: 1,
+    getDetail() {
+        return [
+            `装备: ${this.name}`,
+            `等级: ${this.lv} / ${this.maxLv}`,
+            `防御力 + ${this.def + (this.lv - 1) * this.step}`,
+            `有 ${this.block}% 的概率完全格挡伤害`,
+        ];
+    },
+    getDescription() {
+        return [
+            `装备: ${this.name}`,
+            `等级: ${this.lv + 1} / ${this.maxLv}`,
+            `防御力 + ${this.def + this.lv * this.step}`,
+            `有 ${this.block + this.step}% 的概率完全格挡伤害`,
+        ];
+    },
+    remove() {
+        removeFromArr(cardArr, this);
+        removeFromArr(player.cards, this);
+        player.def -= (this.def + (this.lv - 1) * this.step);
+    },
+    get() {
+        this.lv++;
+        if (isExists(player.cards, this)) {
+            this.levelUp();
+        } else {
+            player.cards.push(this);
+            player.def += this.def;
+            this.block = 17;
+            this.weight++;
+        }
+    },
+    levelUp() {
+        player.def += this.step;
+        this.block += this.step;
+        if (this.lv == this.maxLv) {
+            removeFromArr(cardArr, this);
+        }
+    },
+    icon: [
+        0xffff, 0x8001, 0x8001, 0x87e1,
+        0x8811, 0x9009, 0x9189, 0x9249,
+        0x9249, 0x9189, 0x9009, 0x8811,
+        0x87e1, 0x8001, 0x8001, 0xffff,
+    ]
+};
+
 const card_belt = {
     x: 0,
     y: 0,
@@ -819,6 +879,7 @@ const card_lance = {
 function putItemCard() {
     let arr = [];
     arr.push(card_shield);
+    arr.push(card_small_shield);
     arr.push(card_belt);
     arr.push(card_hp_medicine);
     arr.push(card_necklace);
@@ -829,7 +890,7 @@ function putItemCard() {
         card.lv = 0;
         if (card.type == CARD_TYPE_SUPER_WEAPON) {
             card.weight = 0.1;
-        } else  {
+        } else {
             card.weight = 1;
         }
         cardArr.push(card);
@@ -848,7 +909,7 @@ function initCard() {
         card.lv = 0;
         if (card.type == CARD_TYPE_WEAPON) {
             card.weight = 1.5;
-        } else  {
+        } else {
             card.weight = 1;
         }
     }
