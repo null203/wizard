@@ -258,6 +258,9 @@ function createEnemy(data) {
                 this.ttl = 60;
                 this.isDead = true;
                 scoreboard.kill++;
+                if (this.type == 'boss'){
+                    scoreboard.bossKill++;
+                }
                 return;
             }
             this.timeCount += dt;
@@ -772,13 +775,13 @@ const loop = GameLoop({
     }
 });
 
-function createBoss(boss) {
-    let boss = createEnemy(boss);
+function createBoss(mat) {
+    let boss = createEnemy(mat);
     if (boss == null) {
         for (let enemy of enemyPool.getAliveObjects()) {
             if (!isVisible(enemy)) {
                 enemy.ttl = 0;
-                return createEnemy(boss);
+                return createEnemy(mat);
             }
         }
     }
@@ -828,34 +831,31 @@ function intervalHandle() {
     if (statusBar.m < 3) {
         wave(slime, skeleton);
     }
-    else if (boss.skeleton == null) {
-        boss.skeleton = createBoss(boss_skeleton);
+    else if (bossObj.skeleton == null) {
+        bossObj.skeleton = createBoss(boss_skeleton);
     }
     else if (statusBar.m < 6) {
         wave(spider, snake);
     }
-    else if (boss.crab == null) {
-        boss.crab = createBoss(boss_crab);
+    else if (bossObj.crab == null) {
+        bossObj.crab = createBoss(boss_crab);
     }
     else if (statusBar.m < 9) {
         wave(mummy, orc);
     }
-    else if (boss.tauren == null) {
-        boss.tauren = createBoss(boss_tauren);
+    else if (bossObj.tauren == null) {
+        bossObj.tauren = createBoss(boss_tauren);
     }
     else if (statusBar.m < 12) {
         wave(devil, fox);
     }
-    else if (boss.alien == null) {
-        boss.alien = createBoss(boss_alien);
+    else if (bossObj.alien == null) {
+        bossObj.alien = createBoss(boss_alien);
     }
     else if (statusBar.m < 15) {
         wave(reaper, reaper);
-    } else if (!boss.skeleton.isAlive()
-        && !boss.crab.isAlive()
-        && !boss.tauren.isAlive()
-        && !boss.alien.isAlive()
-    ) {
+    }
+    else if (enemyPool.getAliveObjects().length == 0) {
         openDialog(gameOverDialog);
     }
 }

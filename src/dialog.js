@@ -380,9 +380,9 @@ const startDialog = Sprite({
     close() {
         this.show = false;
         lowHpTime = 0;
-        for (let flag in bossFlag) {
-            if (bossFlag.hasOwnProperty(flag)) {
-                bossFlag[flag] = true;
+        for (let boss in bossObj) {
+            if (bossObj.hasOwnProperty(boss)) {
+                bossObj[boss] = null;
             }
         }
         createBackground();
@@ -431,10 +431,12 @@ const gameOverDialog = Sprite({
         return [
             `生存时间: ${statusBar.time}`,
             `等级: ${player.lv}`,
-            `击杀: ${scoreboard.kill}`,
-            `场景破坏: ${scoreboard.break}`,
+            `DPS: ${Math.floor(scoreboard.damage / (statusBar.m * 60 + statusBar.s))}`,
+            `击杀敌人: ${scoreboard.kill}`,
+            `击杀BOSS: ${scoreboard.bossKill} / ${bossCount}`,
             `总伤害: ${scoreboard.damage}`,
             `受到伤害: ${scoreboard.receivedDamage}`,
+            `破坏: ${scoreboard.break}`,
         ];
     },
     open() {
@@ -466,9 +468,8 @@ const gameOverDialog = Sprite({
         let y = 0;
         context.fillStyle = 'black';
         context.fillRect(x, y, screenWidth, screenHeight);
-
         x = screenWidth / 2;
-        y += objSize * 1.5;
+        y += objSize;
         context.fillStyle = 'white';
         context.font = `${Math.floor(19 * kw)}px ${fontFamily}`;
         context.lineWidth = 1;
@@ -478,7 +479,7 @@ const gameOverDialog = Sprite({
         context.lineWidth = 1;
         context.textAlign = 'left';
         x = Math.floor(screenWidth / 2 - objSize * 4);
-        y += objSize / 2;
+        y += objSize / 5;
         for (let line of this.getText()) {
             y += objSize;
             context.fillText(line, x, y);

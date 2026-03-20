@@ -108,6 +108,7 @@ const viewport = {
 
 const scoreboard = {
     kill: 0,
+    bossKill: 0,
     break: 0,
     damage: 0,
     receivedDamage: 0,
@@ -119,7 +120,8 @@ const scoreboard = {
     }
 };
 
-const boss = {
+const bossCount = 4;
+const bossObj = {
     skeleton: null,
     crab: null,
     tauren: null,
@@ -625,8 +627,8 @@ const boss_alien = {
     hp: 60000,
     atk: 120,
     def: 25,
-    exp: 450000,
-    speed: 1,
+    exp: 0,
+    speed: 2,
     isBoss: true,
     size: pixelSize * 2,
     audioPath: '/audio/attack_blunt',
