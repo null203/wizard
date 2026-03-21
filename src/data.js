@@ -46,13 +46,12 @@ const pixelSize = 2 * kw;
 const joystickOuterRadius = 60;
 const speedFactor = pixelSize / joystickOuterRadius;
 const minDistance = 40 * kw;
-const approachDistance = 100 * kw;
 const objSize = bitmapWidth * pixelSize;
-const enemyAttackRangeTiles = 1;
+const approachDistance = objSize;
+const approachDist2 = approachDistance * approachDistance;
 const cardLimit = 9;
 
 const worldLimit = 5000 * kw;
-const enemyCount = 4;
 const expRatio = 1.5;
 
 const backgroundArr = [];
@@ -63,11 +62,12 @@ const dialogArr = [];
 const gridSize = objSize;
 const cols = Math.ceil(worldLimit / gridSize);
 const rows = Math.ceil(worldLimit / gridSize);
-const FLOW_RANGE = Math.ceil(screenHeight / gridSize);
+const FLOW_RANGE = Math.ceil(screenHeight / gridSize / 2);
 const dirs = [
     [1, 0], [-1, 0], [0, 1], [0, -1],
     [1, 1], [-1, -1], [1, -1], [-1, 1]
 ];
+let enemyCount = 1;
 let costField = [];
 let integrationField = [];
 let flowField = [];
@@ -132,6 +132,7 @@ let paused = true;
 let intervalId = null;
 let lowHpTime = 0;
 let respawnTime = 0;
+let enemyWareStartTime = 0;
 
 const wizard = [
     // left

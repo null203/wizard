@@ -342,7 +342,7 @@ const card_small_shield = {
     name: '小圆盾',
     width: objSize * 2,
     height: objSize * 2,
-    def: 8,
+    def: 5,
     step: 2,
     block: 17,
     weight: 1,
@@ -351,7 +351,7 @@ const card_small_shield = {
             `装备: ${this.name}`,
             `等级: ${this.lv} / ${this.maxLv}`,
             `防御力 + ${this.def + (this.lv - 1) * this.step}`,
-            `有 ${this.block}% 的概率完全格挡伤害`,
+            `有 ${this.block}% 的概率完全格挡伤害。`,
         ];
     },
     getDescription() {
@@ -359,7 +359,7 @@ const card_small_shield = {
             `装备: ${this.name}`,
             `等级: ${this.lv + 1} / ${this.maxLv}`,
             `防御力 + ${this.def + this.lv * this.step}`,
-            `有 ${this.block + this.step}% 的概率完全格挡伤害`,
+            `有 ${this.block + this.step}% 的概率完全格挡伤害。`,
         ];
     },
     remove() {
@@ -374,7 +374,7 @@ const card_small_shield = {
         } else {
             player.cards.push(this);
             player.def += this.def;
-            this.block = 17;
+            this.block = 17 + this.step;
             this.weight++;
         }
     },

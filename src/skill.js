@@ -10,23 +10,35 @@ function multiDamageDetection(obj, enemy) {
         && !isExists(obj.targetArr, enemy);
 }
 
-function searchEnemy(closestDistance) {
-    let target = null;
-    for (let enemy of enemyPool.getAliveObjects()) {
-        let deltaX = enemy.x - player.x;
-        let deltaY = enemy.y - player.y;
-        let dist2 = deltaX * deltaX + deltaY * deltaY;
-        if (dist2 < closestDistance * closestDistance) {
-            closestDistance = Math.sqrt(dist2);
-            target = {
-                dx: deltaX,
-                dy: deltaY,
-                distance: closestDistance,
-                enemy : enemy
-            };
+function searchEnemy(maxDistance) {
+    let minDist2 = maxDistance * maxDistance;
+    let bestEnemy = null;
+    let bestDx = 0;
+    let bestDy = 0;
+    let enemies = enemyPool.getAliveObjects();
+    for (let i = 0; i < enemies.length; i++) {
+        let enemy = enemies[i];
+        let dx = enemy.x - player.x;
+        let dy = enemy.y - player.y;
+        // AABB快速裁剪
+        if (dx > maxDistance || dx < -maxDistance ||
+            dy > maxDistance || dy < -maxDistance) continue;
+        let dist2 = dx * dx + dy * dy;
+        if (dist2 < minDist2) {
+            minDist2 = dist2;
+            bestEnemy = enemy;
+            bestDx = dx;
+            bestDy = dy;
         }
     }
-    return target;
+    if (!bestEnemy) return null;
+    return {
+        enemy: bestEnemy,
+        dx: bestDx,
+        dy: bestDy,
+        dist2: minDist2,
+        distance: Math.sqrt(minDist2)
+    };
 }
 
 const lightning = Sprite({
@@ -152,8 +164,11 @@ const fireball = Sprite({
                 this.dx = Math.round(unitX * this.speed);
                 this.dy = Math.round(unitY * this.speed);
             } else {
-                this.dx = Math.round(Math.cos(player.angle) * this.speed);
-                this.dy = Math.round(Math.sin(player.angle) * this.speed);
+                if (player.dx != 0 || player.dy != 0) {
+                    let angle = Math.atan2(player.dy, player.dx);
+                    this.dx = Math.round(Math.cos(angle) * this.speed);
+                    this.dy = Math.round(Math.sin(angle) * this.speed);
+                }
             }
             audioAssets['/audio/skill_fireball'].play();
             this.active = true;

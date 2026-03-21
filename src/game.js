@@ -12,15 +12,12 @@ function initFlowField() {
 }
 
 function updateFlowField() {
-
     let px = (player.x / gridSize) | 0;
     let py = (player.y / gridSize) | 0;
-
     let minX = Math.max(0, px - FLOW_RANGE);
     let maxX = Math.min(cols - 1, px + FLOW_RANGE);
     let minY = Math.max(0, py - FLOW_RANGE);
     let maxY = Math.min(rows - 1, py + FLOW_RANGE);
-
     // costField
     for (let y = minY; y <= maxY; y++) {
         for (let x = minX; x <= maxX; x++) {
@@ -75,8 +72,7 @@ function updateFlowField() {
             for (let [dx, dy] of dirs) {
                 let nx = x + dx;
                 let ny = y + dy;
-
-                if (nx >= 0 && ny >= 0 && nx < cols && ny < rows) {
+                if (nx >= minX && nx <= maxX && ny >= minY && ny <= maxY) {
                     if (integrationField[ny][nx] < best) {
                         best = integrationField[ny][nx];
                         bestDir = { x: dx, y: dy };
@@ -273,9 +269,9 @@ function createEnemy(data) {
             this.timeCount += dt;
             if (this.timeCount >= 1) {
                 if (isVisible(this)) {
-                    const dx = (Math.abs(player.x - this.x) / objSize) | 0;
-                    const dy = (Math.abs(player.y - this.y) / objSize) | 0;
-                    if (Math.max(dx, dy) < enemyAttackRangeTiles) {
+                    const dx = Math.abs(player.x - this.x) | 0;
+                    const dy = Math.abs(player.y - this.y) | 0;
+                    if (Math.max(dx, dy) < approachDistance) {
                         this.attack();
                     }
                 }
@@ -615,7 +611,6 @@ const player = Sprite({
     stop: false,
     point: 0,
     pickupDistance: 50 * kw,
-    angle: 0,
     lastDx: 0,
     lastDy: 0,
     init() {
@@ -637,31 +632,33 @@ const player = Sprite({
         this.pickupDistance = 50 * kw;
     },
     checkPoint() {
-        if (this.point > 0) {
-            audioAssets['/audio/level_up'].play();
-            showMsg(this.x, this.y, 'LEVEL UP');
-            openDialog(levelUpDialog);
-        }
+        if (this.point <= 0) return;
+        audioAssets['/audio/level_up'].play();
+        showMsg(this.x - objSize / 3, this.y, 'LEVEL UP');
+        openDialog(levelUpDialog);
     },
     addExp(exp) {
         exp = Math.floor(exp * expRatio);
-        if (this.lv < maxExp.length) {
-            let tempExp = exp;
-            while (tempExp > 0) {
+        if (this.lv >= maxExp.length) return;
+        let tempExp = exp;
+        while (tempExp > 0) {
+            let need = this.maxExp - this.exp;
+            if (tempExp < need) {
                 this.exp += tempExp;
-                if (this.exp >= this.maxExp) {
-                    this.lv++;
-                    tempExp = this.exp - this.maxExp;
-                    this.exp = 0;
-                    this.maxExp = maxExp[this.lv - 1];
-                    this.point++;
-                    if (this.lv == 3) {
-                        putItemCard();
-                    }
-                } else {
-                    return;
-                }
+                return;
             }
+            tempExp -= need;
+            this.lv++;
+            this.exp = 0;
+            this.point++;
+            if (this.lv === 3) {
+                putItemCard();
+            }
+            if (this.lv >= maxExp.length) {
+                this.exp = 0;
+                return;
+            }
+            this.maxExp = maxExp[this.lv - 1];
         }
     },
     addHp(hp) {
@@ -684,24 +681,25 @@ const player = Sprite({
     update() {
         if (!this.isAlive()) {
             openDialog(gameOverDialog);
-        }
-        if (this.stop) {
             return;
         }
-        for (let obj of quadtree.get(this)) {
-            if (obj.type == 'background' && obj.isAlive() && isColliding(this, obj)) {
-                let deltaX = this.x - obj.x;
-                let deltaY = this.y - obj.y;
-                let distance = deltaX * deltaX + deltaY * deltaY;
-                if (distance > pixelSize * pixelSize) {
-                    let d = Math.sqrt(distance);
-                    let unitX = deltaX / d;
-                    let unitY = deltaY / d;
-                    let offset = pixelSize / 2;
-                    this.x += Math.round(unitX * offset);
-                    this.y += Math.round(unitY * offset);
-                    break;
-                }
+        if (this.stop) return;
+        const nearby = quadtree.get(this);
+        for (let i = 0; i < nearby.length; i++) {
+            const obj = nearby[i];
+            if (obj.type !== 'background' || !obj.isAlive()) continue;
+            if (!isColliding(this, obj)) continue;
+            let deltaX = this.x - obj.x;
+            let deltaY = this.y - obj.y;
+            let distance = deltaX * deltaX + deltaY * deltaY;
+            if (distance > pixelSize * pixelSize) {
+                let d = Math.sqrt(distance);
+                let unitX = deltaX / d;
+                let unitY = deltaY / d;
+                let offset = pixelSize / 2;
+                this.x += Math.round(unitX * offset);
+                this.y += Math.round(unitY * offset);
+                break;
             }
         }
         if (joystick.active) {
@@ -711,9 +709,6 @@ const player = Sprite({
         }
         this.dx = Math.round(joystick.offsetX * speedFactor);
         this.dy = Math.round(joystick.offsetY * speedFactor);
-        if (this.dx != 0 || this.dy != 0) {
-            this.angle = Math.atan2(this.dy, this.dx);
-        }
         this.lastDx = this.dx != 0 ? this.dx : this.lastDx;
         this.lastDy = this.dy != 0 ? this.dy : this.lastDy;
         checkBoundary(this);
@@ -725,44 +720,50 @@ const player = Sprite({
 });
 
 const loop = GameLoop({
-
+    frameCount: 0,
     update(dt) {
-        for (let dialog of dialogArr) {
-            dialog.update(dt);
+        // dialog
+        for (let i = 0; i < dialogArr.length; i++) {
+            dialogArr[i].update(dt);
         }
         if (paused) return;
-
         updateViewport(player);
-        quadtree.clear();
-        quadtree.add(player, enemyPool.getAliveObjects(), backgroundArr, fireball, deathbook, poisonsmoke, axe, lance);
-
+        if ((this.frameCount++ & 1) === 0) {
+            quadtree.clear();
+            quadtree.add(player, enemyPool.getAliveObjects(), backgroundArr, fireball, deathbook, poisonsmoke, axe, lance);
+        }
+        // FlowField
         let dx = player.x - flowLastPlayerX;
         let dy = player.y - flowLastPlayerY;
-        if (dx * dx + dy * dy > approachDistance * approachDistance) {
+        if (dx * dx + dy * dy > approachDist2) {
             updateFlowField();
         }
         player.update(dt);
         enemyPool.update(dt);
         itemPool.update(dt);
         msgPool.update(dt);
-        for (let skill of player.skill) {
-            skill.update(dt);
+        let skills = player.skill;
+        for (let i = 0; i < skills.length; i++) {
+            skills[i].update(dt);
         }
-        for (let background of backgroundArr) {
-            background.update();
+        for (let i = 0; i < backgroundArr.length; i++) {
+            backgroundArr[i].update();
         }
         expBar.update(dt);
         menu.update(dt);
     },
-
     render() {
-        player.render();
-        enemyPool.render();
-        for (let background of backgroundArr) {
-            if (isVisible(background)) {
-                background.render();
+        for (let i = 0; i < backgroundArr.length; i++) {
+            let bg = backgroundArr[i];
+            if (bg.x < viewport.x + viewport.width + bg.width / 2 &&
+                bg.x + bg.width > viewport.x + bg.width / 2 &&
+                bg.y < viewport.y + viewport.height + bg.height / 2 &&
+                bg.y + bg.height > viewport.y + bg.height / 2) {
+                bg.render();
             }
         }
+        enemyPool.render();
+        player.render();
         itemPool.render();
         msgPool.render();
         worldBoundary.render();
@@ -770,10 +771,12 @@ const loop = GameLoop({
         statusBar.render();
         menu.render();
         drawJoystick();
-        for (let skill of player.skill) {
-            skill.render();
+        let skills = player.skill;
+        for (let i = 0; i < skills.length; i++) {
+            skills[i].render();
         }
-        for (let dialog of dialogArr) {
+        for (let i = 0; i < dialogArr.length; i++) {
+            let dialog = dialogArr[i];
             if (dialog.show) {
                 dialog.render();
                 break;
@@ -830,9 +833,30 @@ function intervalHandle() {
     if (player.hp < player.maxHp / 2) {
         lowHpTime++;
         if (lowHpTime >= 60) {
-            showMsg(player.x, player.y, '摧毁火把可以恢复生命值', 800);
+            showMsg(player.x - objSize, player.y, '摧毁火把可以恢复生命值', 800);
             lowHpTime = 0;
         }
+    }
+    let dps = Math.floor(scoreboard.damage / (statusBar.m * 60 + statusBar.s));
+    let count = calcEnemyCount(dps);
+    if (enemyCount < count) {
+        enemyCount++;
+    }
+    // console.log('dps: ' + dps + ', enemyCount: ' + enemyCount);
+
+    if (player.lv < 5) {
+        if (enemyPool.getAliveObjects().length < 6) {
+            wave(slime, skeleton);
+        }
+        return;
+    }
+
+    if (enemyWareStartTime >= 3) {
+        showMsg(player.x - objSize / 3, player.y, '他们来了...', 800);
+        enemyWareStartTime = -1;
+    }
+    if (enemyWareStartTime > -1) {
+        enemyWareStartTime++;
     }
 
     if (statusBar.m < 3) {

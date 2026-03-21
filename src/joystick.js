@@ -46,25 +46,24 @@ function handleTouchStart(event) {
 }
 
 function handleTouchMove(event) {
-    if (joystick.enable && joystick.active) {
-        for (let touch of event.touches) {
-            if (touch.identifier === joystick.touchId) {
-                let dx = touch.clientX - joystick.x;
-                let dy = touch.clientY - joystick.y;
-                let distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < joystick.outerRadius) {
-                    joystick.offsetX = dx;
-                    joystick.offsetY = dy;
-                } else {
-                    // 限制在手柄范围内
-                    let angle = Math.atan2(dy, dx);
-                    joystick.offsetX = Math.cos(angle) * joystick.outerRadius;
-                    joystick.offsetY = Math.sin(angle) * joystick.outerRadius;
-                }
-                joystick.frameCount = 0;
-            }
+    if (!joystick.enable || !joystick.active) return;
+    const outerRadius = joystick.outerRadius;
+    const outerRadius2 = outerRadius * outerRadius;
+    for (let i = 0; i < event.touches.length; i++) {
+        const touch = event.touches[i];
+        if (touch.identifier !== joystick.touchId) continue;
+        let dx = touch.clientX - joystick.x;
+        let dy = touch.clientY - joystick.y;
+        let dist2 = dx * dx + dy * dy;
+        if (dist2 > outerRadius2) {
+            let invLen = outerRadius / Math.sqrt(dist2);
+            dx *= invLen;
+            dy *= invLen;
         }
+        joystick.offsetX = dx;
+        joystick.offsetY = dy;
+        joystick.frameCount = 0;
+        break;
     }
 }
 
