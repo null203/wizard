@@ -129,7 +129,7 @@ const fireball = Sprite({
     radius: objSize * 8,
     speed: 240 * kw,
     particles: Pool({
-        maxSize: 170,
+        maxSize: 60,
         create: Sprite
     }),
     timeCount: 0,
@@ -172,7 +172,7 @@ const fireball = Sprite({
             }
             audioAssets['/audio/skill_fireball'].play();
             this.active = true;
-            this.targetArr = [];
+            clearArr(this.targetArr);
         }
         if (this.active) {
             this.particles.get(this.createParticles());
@@ -267,6 +267,7 @@ const deathbook = Sprite({
                 this.step = -0.05;
             }
         }
+        if (!this.active) return;
         if (this.count >= this.maxCount) {
             this.angle = Math.PI * 3 / 2;
             this.active = false;
@@ -277,26 +278,24 @@ const deathbook = Sprite({
             if (this.angle > this.endAngle) {
                 this.angle -= Math.PI * 2;
                 this.count++;
-                this.targetArr = [];
+                clearArr(this.targetArr);
             }
         } else {
             if (this.angle < this.endAngle) {
                 this.angle += Math.PI * 2;
                 this.count++;
-                this.targetArr = [];
+                clearArr(this.targetArr);
             }
         }
-        if (this.active) {
-            this.angle += this.step;
-            for (let enemy of quadtree.get(this)) {
-                if (multiDamageDetection(this, enemy)) {
-                    player.attack(enemy, this.ratio);
-                    this.targetArr.push(enemy);
-                }
+        this.angle += this.step;
+        for (let enemy of quadtree.get(this)) {
+            if (multiDamageDetection(this, enemy)) {
+                player.attack(enemy, this.ratio);
+                this.targetArr.push(enemy);
             }
-            this.x = player.x + Math.cos(this.angle) * this.radius;
-            this.y = player.y + Math.sin(this.angle) * this.radius;
         }
+        this.x = player.x + Math.cos(this.angle) * this.radius;
+        this.y = player.y + Math.sin(this.angle) * this.radius;
     },
     render() {
         if (this.active) {
@@ -371,7 +370,7 @@ const lightsaber = kontra.Sprite({
             this.radius = 0;
             this.op = 1;
             player.stop = false;
-            this.targetArr = [];
+            clearArr(this.targetArr);
         }
         if (this.active) {
             if (this.angle > Math.PI / 2 && this.angle < Math.PI * 3 / 2) {
@@ -479,7 +478,7 @@ const poisonsmoke = Sprite({
     fly: false,
     active: false,
     particles: Pool({
-        maxSize: 100,
+        maxSize: 60,
         create: Sprite
     }),
     speed: 3 * kw,
@@ -665,7 +664,7 @@ const axe = Sprite({
                 // 检查飞行距离是否达到最大
                 if (Math.hypot(this.x - this.startX, this.y - this.startY) >= this.distance) {
                     this.returnToPlayer = true;
-                    this.targetArr = [];
+                    clearArr(this.targetArr);
                 }
             } else {
                 // 回旋镖开始返回玩家
@@ -680,7 +679,7 @@ const axe = Sprite({
                     this.active = false;
                     this.timeCount = 0;
                     this.returnToPlayer = false;
-                    this.targetArr = [];
+                    clearArr(this.targetArr);
                 }
             }
             this.advance();
@@ -718,10 +717,6 @@ const lance = Sprite({
     active: false,
     timeCount: 0,
     playerLastDx: 0,
-    particles: Pool({
-        maxSize: 20,
-        create: Sprite
-    }),
     init() {
         this.x = 0;
         this.y = 0;
@@ -761,10 +756,9 @@ const lance = Sprite({
             if (this.timeCount > this.cd + this.time) {
                 this.active = false;
                 this.timeCount = 0;
-                this.targetArr = [];
+                clearArr(this.targetArr);
             }
             this.advance();
-            this.particles.update();
         }
     },
     render() {
@@ -791,7 +785,6 @@ const lance = Sprite({
             }
             context.restore();
         }
-        this.particles.render();
     }
 });
 

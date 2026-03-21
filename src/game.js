@@ -354,12 +354,10 @@ function createEnemy(data) {
             this.advance();
         },
         render() {
-            if (isVisible(this)) {
-                if (this.ttl > 60) {
-                    drawBitmap(this.direction, data.mat, data.size);
-                } else {
-                    drawBitmap(Math.ceil(this.ttl / 15), boom, data.size);
-                }
+            if (this.ttl > 60) {
+                drawBitmap(this.direction, data.mat, data.size);
+            } else {
+                drawBitmap(Math.ceil(this.ttl / 15), boom, data.size);
             }
         }
     });
@@ -422,9 +420,7 @@ function createItem(x, y, v, mat) {
             }
         },
         render() {
-            if (isVisible(this)) {
-                drawBitmap(this.direction, mat);
-            }
+            drawBitmap(this.direction, mat);
         }
     });
 }
@@ -442,14 +438,12 @@ function showDamage(x, y, damage, crit) {
             this.advance();
         },
         render() {
-            if (isVisible(this)) {
-                context.save();
-                context.translate(Math.round(screenWidth / 2 - player.x), Math.round(screenHeight / 2 - player.y - objSize * 3));
-                context.fillStyle = 'white';
-                context.font = `${Math.floor(13 * kw * crit)}px ${fontFamily}`;
-                context.fillText(damage, -objSize * 3 / 5, -objSize / 2);
-                context.restore();
-            }
+            context.save();
+            context.translate(Math.round(screenWidth / 2 - player.x), Math.round(screenHeight / 2 - player.y - objSize * 3));
+            context.fillStyle = 'white';
+            context.font = `${Math.floor(13 * kw * crit)}px ${fontFamily}`;
+            context.fillText(damage, -objSize * 3 / 5, -objSize / 2);
+            context.restore();
         }
     });
 }
@@ -467,15 +461,13 @@ function showMsg(x, y, msg, ttl = 120) {
             this.advance();
         },
         render() {
-            if (isVisible(this)) {
-                context.save();
-                context.translate(Math.round(screenWidth / 2 - player.x + objSize / 2), Math.round(screenHeight / 2 - player.y + objSize / 2 - objSize * 3));
-                context.fillStyle = 'white';
-                context.font = `${Math.floor(19 * kw)}px ${fontFamily}`;
-                context.textAlign = 'center';
-                context.fillText(msg, 0, 0);
-                context.restore();
-            }
+            context.save();
+            context.translate(Math.round(screenWidth / 2 - player.x + objSize / 2), Math.round(screenHeight / 2 - player.y + objSize / 2 - objSize * 3));
+            context.fillStyle = 'white';
+            context.font = `${Math.floor(19 * kw)}px ${fontFamily}`;
+            context.textAlign = 'center';
+            context.fillText(msg, 0, 0);
+            context.restore();
         }
     });
 }
@@ -747,7 +739,7 @@ const loop = GameLoop({
             skills[i].update(dt);
         }
         for (let i = 0; i < backgroundArr.length; i++) {
-            backgroundArr[i].update();
+            backgroundArr[i].update(dt);
         }
         expBar.update(dt);
         menu.update(dt);
@@ -755,17 +747,32 @@ const loop = GameLoop({
     render() {
         for (let i = 0; i < backgroundArr.length; i++) {
             let bg = backgroundArr[i];
-            if (bg.x < viewport.x + viewport.width + bg.width / 2 &&
-                bg.x + bg.width > viewport.x + bg.width / 2 &&
-                bg.y < viewport.y + viewport.height + bg.height / 2 &&
-                bg.y + bg.height > viewport.y + bg.height / 2) {
+            if (isVisible(bg)) {
                 bg.render();
             }
         }
-        enemyPool.render();
+        let enemyArr = enemyPool.getAliveObjects();
+        for (let i = 0; i < enemyArr.length; i++) {
+            let enemy = enemyArr[i];
+            if (isVisible(enemy)) {
+                enemy.render();
+            }
+        }
+        let itemArr = itemPool.getAliveObjects();
+        for (let i = 0; i < itemArr.length; i++) {
+            let item = itemArr[i];
+            if (isVisible(item)) {
+                item.render();
+            }
+        }
+        let msgArr = msgPool.getAliveObjects();
+        for (let i = 0; i < msgArr.length; i++) {
+            let msg = msgArr[i];
+            if (isVisible(msg)) {
+                msg.render();
+            }
+        }
         player.render();
-        itemPool.render();
-        msgPool.render();
         worldBoundary.render();
         expBar.render();
         statusBar.render();

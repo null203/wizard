@@ -99,8 +99,9 @@ function isClickRect(pointer, rect) {
 }
 
 function isExists(arr, target) {
-    for (let obj of arr) {
-        if (obj == target) return true;
+    var i = arr.length;
+    while (i--) {
+        if (arr[i] === target) return true;
     }
     return false;
 }
@@ -110,7 +111,8 @@ function removeFromArr(arr, target) {
 }
 
 function clearArr(arr) {
-    arr.splice(0, arr.length);
+    //arr.splice(0, arr.length);
+    arr.length = 0;
 }
 
 function bezier(point, controlPoint1, controlPoint2, t) {
