@@ -164,14 +164,9 @@ const fireball = Sprite({
                 this.dx = Math.round(unitX * this.speed);
                 this.dy = Math.round(unitY * this.speed);
             } else {
-                if (player.dx != 0 || player.dy != 0) {
-                    let angle = Math.atan2(player.dy, player.dx);
-                    this.dx = Math.round(Math.cos(angle) * this.speed);
-                    this.dy = Math.round(Math.sin(angle) * this.speed);
-                } else {
-                    this.dx = 1;
-                    this.dy = 0;
-                }
+                let angle = Math.atan2(player.lastDy, player.lastDx);
+                this.dx = Math.round(Math.cos(angle) * this.speed);
+                this.dy = Math.round(Math.sin(angle) * this.speed);
             }
             audioAssets['/audio/skill_fireball'].play();
             this.active = true;

@@ -606,8 +606,8 @@ const player = Sprite({
     stop: false,
     point: 0,
     pickupDistance: 50 * kw,
-    lastDx: 0,
-    lastDy: 0,
+    lastDx: 1,
+    lastDy: 1,
     init() {
         this.x = wizard.x;
         this.y = wizard.y;
@@ -704,8 +704,10 @@ const player = Sprite({
         }
         this.dx = Math.round(joystick.renderX * speedFactor);
         this.dy = Math.round(joystick.renderY * speedFactor);
-        this.lastDx = this.dx != 0 ? this.dx : this.lastDx;
-        this.lastDy = this.dy != 0 ? this.dy : this.lastDy;
+        if (this.dx != 0 || this.dy != 0){
+            this.lastDx = this.dx
+            this.lastDy = this.dy;
+        }
         checkBoundary(this);
         this.advance();
     },
