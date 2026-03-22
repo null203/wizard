@@ -10,6 +10,10 @@ function multiDamageDetection(obj, enemy) {
         && !isExists(obj.targetArr, enemy);
 }
 
+function translate(offset = 0) {
+    context.translate(screenWidth / 2 - player.x + offset, screenHeight / 2 - player.y - objSize * 3 + offset);
+}
+
 function searchEnemy(maxDistance) {
     let minDist2 = maxDistance * maxDistance;
     let bestEnemy = null;
@@ -97,7 +101,7 @@ const lightning = Sprite({
     drawLightning(x1, y1, x2, y2, iterations) {
         if (iterations === 0) {
             context.save();
-            context.translate(Math.round(screenWidth / 2 - player.x), Math.round(screenHeight / 2 - player.y - objSize * 3));
+            translate();
             context.beginPath();
             context.moveTo(x1, y1);
             context.lineTo(x2, y2);
@@ -161,12 +165,12 @@ const fireball = Sprite({
             if (target != null) {
                 let unitX = target.dx / target.distance;
                 let unitY = target.dy / target.distance;
-                this.dx = Math.round(unitX * this.speed);
-                this.dy = Math.round(unitY * this.speed);
+                this.dx = unitX * this.speed;
+                this.dy = unitY * this.speed;
             } else {
                 let angle = Math.atan2(player.lastDy, player.lastDx);
-                this.dx = Math.round(Math.cos(angle) * this.speed);
-                this.dy = Math.round(Math.sin(angle) * this.speed);
+                this.dx = Math.cos(angle) * this.speed;
+                this.dy = Math.sin(angle) * this.speed;
             }
             audioAssets['/audio/skill_fireball'].play();
             this.active = true;
@@ -207,7 +211,7 @@ const fireball = Sprite({
             render() {
                 const particle = this;
                 context.save();
-                context.translate(Math.round(screenWidth / 2 - player.x), Math.round(screenHeight / 2 - player.y - objSize * 3));
+                translate(fireball.width / 2);
                 context.beginPath();
                 context.arc(
                     0,
@@ -231,6 +235,7 @@ const deathbook = Sprite({
     width: objSize,
     height: objSize,
     type: 'skill',
+    anchor: { x: 0.5, y: 0.5 },
     ratio: 0,
     maxCount: 3,
     cd: 3,
@@ -422,8 +427,8 @@ const lightsaber = kontra.Sprite({
         this.particles.get({
             x: x,
             y: y,
-            dx: Math.round((Math.random() * 2 - 1) * 100) / 100,
-            dy: Math.round((Math.random() * 2 - 1) * 100) / 100,
+            dx: (Math.random() * 2 - 1) * 100 / 100,
+            dy: (Math.random() * 2 - 1) * 100 / 100,
             tx: (Math.random() - 0.5) * 180 * kw,
             ty: (Math.random() - 0.5) * 180 * kw,
             a: Math.random(),
@@ -506,8 +511,8 @@ const poisonsmoke = Sprite({
             if (target != null) {
                 let unitX = target.dx / target.distance;
                 let unitY = target.dy / target.distance;
-                this.dx = Math.round(unitX * this.speed);
-                this.dy = Math.round(unitY * this.speed);
+                this.dx = unitX * this.speed;
+                this.dy = unitY * this.speed;
                 this.fly = true;
             }
         }
@@ -538,12 +543,13 @@ const poisonsmoke = Sprite({
                 this.count++;
                 this.activeTimeCount = 0;
                 // 伤害
+                const radius2 = this.radius * this.radius;
                 for (let enemy of enemyPool.getAliveObjects()) {
-                    if (enemy != player && enemy.hp > 0) {
+                    if (enemy.hp > 0) {
                         let deltaX = enemy.x - this.x;
                         let deltaY = enemy.y - this.y;
-                        let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                        if (distance < this.radius) {
+                        let dist2 = deltaX * deltaX + deltaY * deltaY;
+                        if (dist2 < radius2) {
                             player.attack(enemy, this.ratio);
                         }
                     }
@@ -555,7 +561,7 @@ const poisonsmoke = Sprite({
     render() {
         if (this.fly) {
             context.save();
-            context.translate(Math.round(screenWidth / 2 - player.x), Math.round(screenHeight / 2 - player.y - objSize * 3));
+            translate();
             context.fillStyle = 'white';
             context.fillRect(this.width / 4, 0, this.width / 2, this.height / 2);
             context.fillRect(0, this.height / 2, this.width, this.height / 2);
@@ -586,7 +592,7 @@ const poisonsmoke = Sprite({
             },
             render() {
                 context.save();
-                context.translate(Math.round(screenWidth / 2 - player.x), Math.round(screenHeight / 2 - player.y - objSize * 3));
+                translate(poisonsmoke.width / 2);
                 context.beginPath();
                 context.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 context.fillStyle = `rgba(255, 255, 255, ${this.op})`;
@@ -603,6 +609,7 @@ const axe = Sprite({
     width: objSize,
     height: objSize,
     type: 'skill',
+    anchor: { x: 0.5, y: 0.5 },
     ratio: 0,
     cd: 1,
     distance: objSize * 8,
@@ -613,7 +620,7 @@ const axe = Sprite({
     timeCount: 0,
     startX: 0,
     startY: 0,
-    speed: 2 * kw,
+    speed: 4 * kw,
     init() {
         this.x = 0;
         this.y = 0;
@@ -624,7 +631,7 @@ const axe = Sprite({
         this.startX = 0;
         this.startY = 0;
         this.targetArr = [];
-        this.speed = 2 * kw;
+        this.speed = 4 * kw;
         this.distance = objSize * 8;
         this.returnToPlayer = false;
     },
@@ -641,8 +648,8 @@ const axe = Sprite({
             if (target != null) {
                 let unitX = target.dx / target.distance;
                 let unitY = target.dy / target.distance;
-                this.dx = Math.round(unitX * this.speed);
-                this.dy = Math.round(unitY * this.speed);
+                this.dx = unitX * this.speed;
+                this.dy = unitY * this.speed;
                 audioAssets['/audio/skill_axe'].play();
                 this.active = true;
             }
@@ -656,8 +663,6 @@ const axe = Sprite({
                 }
             }
             if (!this.returnToPlayer) {
-                this.x += this.dx;
-                this.y += this.dy;
                 // 检查飞行距离是否达到最大
                 if (Math.hypot(this.x - this.startX, this.y - this.startY) >= this.distance) {
                     this.returnToPlayer = true;
@@ -668,8 +673,6 @@ const axe = Sprite({
                 let angleToPlayer = Math.atan2(player.y - this.y, player.x - this.x);
                 this.dx = Math.cos(angleToPlayer) * this.speed;
                 this.dy = Math.sin(angleToPlayer) * this.speed;
-                this.x += this.dx;
-                this.y += this.dy;
                 // 检查是否已接近玩家
                 if (isColliding(this, player)) {
                     this.angle = 0;
@@ -685,7 +688,7 @@ const axe = Sprite({
     render() {
         if (this.active) {
             context.save();
-            context.translate(Math.round(screenWidth / 2 - player.x), Math.round(screenHeight / 2 - player.y - objSize * 3));
+            translate(objSize / 2);
             context.rotate(this.angle * Math.PI / 180);
             context.fillStyle = 'white';
             context.fillRect(0, -20 * kw, 5 * kw, 40 * kw);
@@ -736,6 +739,7 @@ const lance = Sprite({
             audioAssets['/audio/skill_lance'].play();
         }
         if (this.active) {
+            // playerLastDx 控制动画
             if (this.playerLastDx > 0) {
                 this.playerLastDx += this.playerLastDx < 60 ? 10 : 0;
             } else {
@@ -761,7 +765,7 @@ const lance = Sprite({
     render() {
         if (this.active) {
             context.save();
-            context.translate(Math.round(screenWidth / 2 - player.x), Math.round(screenHeight / 2 - player.y - objSize * 3));
+            translate();
             context.fillStyle = 'white';
             if (this.playerLastDx > 0) {
                 context.fillRect(0, 0, this.width - 10 * kw, this.height);

@@ -48,8 +48,8 @@ function drawBitmap(direction, obj, size = pixelSize) {
         data = createBitmapCanvas(direction, obj.mat, size);
         obj[key] = data;
     }
-    const dx = (screenWidth / 2 - player.x) | 0;
-    const dy = (screenHeight / 2 - player.y - objSize * 3) | 0;
+    const dx = screenWidth / 2 - player.x;
+    const dy = screenHeight / 2 - player.y - objSize * 3;
     context.drawImage(
         data,
         dx,
