@@ -31,7 +31,7 @@ function updateFlowField() {
         let cy = (bg.y / gridSize) | 0;
 
         if (cx >= minX && cx <= maxX && cy >= minY && cy <= maxY) {
-            costField[cy][cx] = 50;
+            costField[cy][cx] = 99999;
         }
     }
     // 局部清空
@@ -201,7 +201,10 @@ function createEnemy(data) {
     let x = Math.round(player.x + screenHeight * 0.8 * Math.cos(angle));
     let y = Math.round(player.y + screenHeight * 0.8 * Math.sin(angle));
 
-    let speed = (enemyPool.getAliveObjects().length >= (enemyPool.maxSize / 2) && randInt(1, 100) <= 20) ? 2 : 1;
+    let alive = enemyPool.getAliveObjects().length;
+    let ratio = alive / enemyPool.maxSize;
+    let chance = ratio * 30; // 最大30%
+    let speed = (randInt(1, 100) <= chance) ? 2 : 1;
 
     return enemyPool.get({
         hp: data.hp,
@@ -355,7 +358,7 @@ function createEnemy(data) {
         },
         render() {
             if (this.ttl > 60) {
-                drawBitmap(this.direction, data.mat, data.size);
+                drawBitmap(this.direction, data, data.size);
             } else {
                 drawBitmap(Math.ceil(this.ttl / 15), boom, data.size);
             }
@@ -363,7 +366,7 @@ function createEnemy(data) {
     });
 }
 
-function createItem(x, y, v, mat) {
+function createItem(x, y, v, obj) {
     if (itemPool.size == itemPool.maxSize) {
         for (let item of itemPool.getAliveObjects()) {
             if (!isVisible(item)) {
@@ -385,9 +388,9 @@ function createItem(x, y, v, mat) {
         fly: false,
         ttl: 1800,
         effect() {
-            if (mat == exp_ball) {
+            if (obj == exp_ball) {
                 player.addExp(v);
-            } else if (mat == heart) {
+            } else if (obj == heart) {
                 player.addHp(v);
             }
         },
@@ -420,7 +423,7 @@ function createItem(x, y, v, mat) {
             }
         },
         render() {
-            drawBitmap(this.direction, mat);
+            drawBitmap(this.direction, obj);
         }
     });
 }
@@ -549,7 +552,7 @@ const menu = Button({
     render() {
         let color = this.pressed ? 'white' : 'gray';
         for (let y = 0; y < bitmapHeight; y++) {
-            let row = menu_book[y];
+            let row = menu_book.mat[y];
             for (let x = 0; x < bitmapWidth; x++) {
                 let isPixelOn = (row >> (bitmapWidth - 1 - x)) & 1;
                 context.fillStyle = isPixelOn ? color : 'black';
@@ -584,14 +587,14 @@ const worldBoundary = Sprite({
 });
 
 const player = Sprite({
-    x: playerData.x,
-    y: playerData.y,
-    maxHp: playerData.maxHp,
-    hp: playerData.maxHp,
-    atk: playerData.atk,
-    def: playerData.def,
-    crit: playerData.crit,
-    maxExp: playerData.maxExp,
+    x: wizard.x,
+    y: wizard.y,
+    maxHp: wizard.maxHp,
+    hp: wizard.maxHp,
+    atk: wizard.atk,
+    def: wizard.def,
+    crit: wizard.crit,
+    maxExp: wizard.maxExp,
     lv: 1,
     exp: 0,
     anchor: { x: 0.5, y: 0.5 },
@@ -606,14 +609,14 @@ const player = Sprite({
     lastDx: 0,
     lastDy: 0,
     init() {
-        this.x = playerData.x;
-        this.y = playerData.y;
-        this.maxHp = playerData.maxHp;
-        this.hp = playerData.maxHp;
-        this.atk = playerData.atk;
-        this.def = playerData.def;
-        this.crit = playerData.crit;
-        this.maxExp = playerData.maxExp;
+        this.x = wizard.x;
+        this.y = wizard.y;
+        this.maxHp = wizard.maxHp;
+        this.hp = wizard.maxHp;
+        this.atk = wizard.atk;
+        this.def = wizard.def;
+        this.crit = wizard.crit;
+        this.maxExp = wizard.maxExp;
         this.lv = 1;
         this.exp = 0;
         this.direction = LEFT;
@@ -829,10 +832,12 @@ function respawnEnemy() {
 }
 
 function intervalHandle() {
-    if (respawnTime >= 5) {
-        respawnEnemy();
-    } else {
-        respawnTime++;
+    if (statusBar.m < 15) {
+        if (respawnTime >= 5) {
+            respawnEnemy();
+        } else {
+            respawnTime++;
+        }
     }
     player.checkPoint();
     statusBar.update();
@@ -852,7 +857,7 @@ function intervalHandle() {
     // console.log('dps: ' + dps + ', enemyCount: ' + enemyCount);
 
     if (player.lv < 5) {
-        if (enemyPool.getAliveObjects().length < 6) {
+        if (enemyPool.getAliveObjects().length < 8) {
             wave(slime, skeleton);
         }
         return;

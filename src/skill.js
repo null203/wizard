@@ -168,6 +168,9 @@ const fireball = Sprite({
                     let angle = Math.atan2(player.dy, player.dx);
                     this.dx = Math.round(Math.cos(angle) * this.speed);
                     this.dy = Math.round(Math.sin(angle) * this.speed);
+                } else {
+                    this.dx = 1;
+                    this.dy = 0;
                 }
             }
             audioAssets['/audio/skill_fireball'].play();
@@ -233,7 +236,6 @@ const deathbook = Sprite({
     width: objSize,
     height: objSize,
     type: 'skill',
-    anchor: { x: 0.5, y: 0.5 },
     ratio: 0,
     maxCount: 3,
     cd: 3,

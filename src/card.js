@@ -344,7 +344,7 @@ const card_small_shield = {
     height: objSize * 2,
     def: 5,
     step: 2,
-    block: 17,
+    block: 19,
     weight: 1,
     getDetail() {
         return [
@@ -374,7 +374,7 @@ const card_small_shield = {
         } else {
             player.cards.push(this);
             player.def += this.def;
-            this.block = 17 + this.step;
+            this.block = 19 + this.step;
             this.weight++;
         }
     },

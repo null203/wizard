@@ -1,86 +1,60 @@
-// function preprocessBitmap(data) {
-//     let result = [];
-//     for (let y = 0; y < data.length; y++) {
-//         let row = data[y];
-//         let cols = [];
-//         for (let x = 0; x < bitmapWidth; x++) {
-//             if ((row >> (bitmapWidth - 1 - x)) & 1) {
-//                 cols.push(x);
-//             }
-//         }
-//         result.push(cols);
-//     }
-//     return result;
-// }
-
-// function createBitmapCanvas(data, size) {
-//     const parsedData = preprocessBitmap(data);
-//     const canvas = document.createElement('canvas');
-//     canvas.width = bitmapWidth * size;
-//     canvas.height = parsedData.length * size;
-//     const ctx = canvas.getContext('2d');
-//     ctx.fillStyle = 'white';
-//     for (let y = 0; y < parsedData.length; y++) {
-//         const row = parsedData[y];
-//         for (let i = 0; i < row.length; i++) {
-//             const x = row[i];
-//             ctx.fillRect(
-//                 x * size,
-//                 y * size,
-//                 size,
-//                 size
-//             );
-//         }
-//     }
-//     return canvas;
-// }
-
-// function drawBitmap(direction, obj, size = pixelSize) {
-//     let data = null;
-//     const key = 'canvas_' + size;
-//     if (obj.hasOwnProperty(key)){
-//         data = obj[key];
-//     } else {
-//         data = createBitmapCanvas(obj.mat, size);
-//         obj[key] = data;
-//     }
-//     // 每一帧的高度偏移
-//     const sy = (direction - 1) * bitmapHeight * pixelSize;
-//     // 用位运算代替 Math.round（更快）
-//     const dx = (screenWidth / 2 - player.x - objSize / 2) | 0;
-//     const dy = (screenHeight / 2 - player.y - objSize / 2 - objSize * 3) | 0;
-//     context.drawImage(
-//         data,
-//         0,                         // sx
-//         sy,                        // sy（根据方向切帧）
-//         bitmapWidth * pixelSize,   // sw
-//         bitmapHeight * pixelSize,  // sh
-//         dx,                        // dx
-//         dy,                        // dy
-//         bitmapWidth * pixelSize,   // dw
-//         bitmapHeight * pixelSize   // dh
-//     );
-// }
-
-function drawBitmap(direction, data, size = pixelSize) {
-    let begin = bitmapHeight * (direction - 1);
-    let end = bitmapHeight * direction;
-    context.save();
-    context.translate(Math.round(screenWidth / 2 - player.x - objSize / 2), Math.round(screenHeight / 2 - player.y - objSize / 2 - objSize * 3));
-    for (let y = begin; y < end; y++) {
+function preprocessBitmap(data) {
+    let result = [];
+    for (let y = 0; y < data.length; y++) {
         let row = data[y];
+        let cols = [];
         for (let x = 0; x < bitmapWidth; x++) {
-            let isPixelOn = (row >> (bitmapWidth - 1 - x)) & 1;
-            context.fillStyle = isPixelOn ? 'white' : 'rgba(0, 0, 0, 0)';
-            context.fillRect(
-                x * size + objSize / 2,
-                (y - begin) * size + objSize / 2,
+            if ((row >> (bitmapWidth - 1 - x)) & 1) {
+                cols.push(x);
+            }
+        }
+        result.push(cols);
+    }
+    return result;
+}
+
+function createBitmapCanvas(direction, data, size) {
+    const parsedData = preprocessBitmap(data);
+    const frameStart = (direction - 1) * bitmapHeight;
+    const frameEnd = direction * bitmapHeight;
+    const canvas = document.createElement('canvas');
+    canvas.width = bitmapWidth * size;
+    canvas.height = bitmapHeight * size;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'white';
+    for (let y = frameStart; y < frameEnd; y++) {
+        const row = parsedData[y];
+        const drawY = (y - frameStart) * size;
+
+        for (let i = 0; i < row.length; i++) {
+            const x = row[i];
+            ctx.fillRect(
+                x * size,
+                drawY,
                 size,
                 size
             );
         }
     }
-    context.restore();
+    return canvas;
+}
+
+function drawBitmap(direction, obj, size = pixelSize) {
+    let data = null;
+    const key = 'canvas_' + direction + '_' + size;
+    if (obj.hasOwnProperty(key)) {
+        data = obj[key];
+    } else {
+        data = createBitmapCanvas(direction, obj.mat, size);
+        obj[key] = data;
+    }
+    const dx = (screenWidth / 2 - player.x) | 0;
+    const dy = (screenHeight / 2 - player.y - objSize * 3) | 0;
+    context.drawImage(
+        data,
+        dx,
+        dy
+    );
 }
 
 function updateViewport(player) {
