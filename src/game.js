@@ -695,12 +695,12 @@ const player = Sprite({
             }
         }
         if (joystick.active) {
-            setDirection(this, joystick.offsetX, joystick.offsetY);
+            setDirection(this, joystick.renderX, joystick.renderY);
         } else {
             keyboard();
         }
-        this.dx = Math.round(joystick.offsetX * speedFactor);
-        this.dy = Math.round(joystick.offsetY * speedFactor);
+        this.dx = Math.round(joystick.renderX * speedFactor);
+        this.dy = Math.round(joystick.renderY * speedFactor);
         this.lastDx = this.dx != 0 ? this.dx : this.lastDx;
         this.lastDy = this.dy != 0 ? this.dy : this.lastDy;
         checkBoundary(this);
@@ -714,7 +714,6 @@ const player = Sprite({
 const loop = GameLoop({
     frameCount: 0,
     update(dt) {
-        // dialog
         for (let i = 0; i < dialogArr.length; i++) {
             dialogArr[i].update(dt);
         }
@@ -730,6 +729,7 @@ const loop = GameLoop({
         if (dx * dx + dy * dy > approachDist2) {
             updateFlowField();
         }
+        updateJoystick();
         player.update(dt);
         enemyPool.update(dt);
         itemPool.update(dt);
@@ -772,12 +772,12 @@ const loop = GameLoop({
                 msg.render();
             }
         }
+        renderJoystick();
         player.render();
         worldBoundary.render();
         expBar.render();
         statusBar.render();
         menu.render();
-        drawJoystick();
         let skills = player.skill;
         for (let i = 0; i < skills.length; i++) {
             skills[i].render();
@@ -898,6 +898,32 @@ function intervalHandle() {
     }
 }
 
+function gameInit() {
+    lowHpTime = 0;
+    for (let boss in bossObj) {
+        if (bossObj.hasOwnProperty(boss)) {
+            bossObj[boss] = null;
+        }
+    }
+    createBackground();
+    initFlowField();
+    updateFlowField();
+    card_lightning.get();
+    // card_lightsaber.get();
+    // card_fireball.get();
+    // card_deathbook.get();
+    // card_poison.get();
+    // card_belt.get();
+    // card_hp_medicine.get();
+    // card_necklace.get();
+    // card_tooth.get();
+    // card_shield.get();
+    // card_magnet.get();
+    // card_axe.get();
+    // card_lance.get();
+    // card_small_shield.get();
+}
+
 load(
     '/audio/attack_slime.mp3',
     '/audio/attack_sword.mp3',
@@ -921,9 +947,9 @@ load(
 ).then(function () {
     document.fonts.load(`12px ${fontFamily}`).then(function () {
         loadDialog.assetsLoaded++;
-        canvas.addEventListener('touchstart', handleTouchStart);
-        canvas.addEventListener('touchmove', handleTouchMove);
-        canvas.addEventListener('touchend', handleTouchEnd);
+        canvas.addEventListener("touchstart", handleTouchStart, { passive: true });
+        canvas.addEventListener("touchmove", handleTouchMove, { passive: true });
+        canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
     });
 });
 

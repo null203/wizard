@@ -73,6 +73,7 @@ let integrationField = [];
 let flowField = [];
 let flowLastPlayerX = 0;
 let flowLastPlayerY = 0;
+let lastMoveTime = 0;
 
 const enemyPool = Pool({
     maxSize: 50,

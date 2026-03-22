@@ -1,4 +1,34 @@
-function drawJoystick() {
+const joystick = {
+    x: screenWidth / 2,
+    y: screenHeight / 1.15,
+    outerRadius: joystickOuterRadius,
+    innerRadius: 20,
+    touchId: null,
+    offsetX: 0,
+    offsetY: 0,
+    renderX: 0,
+    renderY: 0,
+    enable: true,
+    active: false,
+    frameCount: 300,
+    lastMoveTime: 0
+};
+
+function updateJoystick() {
+    let dx = joystick.offsetX;
+    let dy = joystick.offsetY;
+    let max = joystick.outerRadius;
+    let dist2 = dx * dx + dy * dy;
+    if (dist2 > max * max) {
+        let inv = max / Math.sqrt(dist2);
+        dx *= inv;
+        dy *= inv;
+    }
+    joystick.renderX = dx;
+    joystick.renderY = dy;
+}
+
+function renderJoystick() {
     if (joystick.frameCount < 300) {
         context.globalAlpha = 0.4;
         context.beginPath();
@@ -10,8 +40,8 @@ function drawJoystick() {
         context.globalAlpha = 0.7;
         context.beginPath();
         context.arc(
-            joystick.x + joystick.offsetX,
-            joystick.y + joystick.offsetY,
+            joystick.x + joystick.renderX,
+            joystick.y + joystick.renderY,
             joystick.innerRadius, 0, 2 * Math.PI
         );
         context.fillStyle = 'gray';
@@ -20,15 +50,6 @@ function drawJoystick() {
         context.globalAlpha = 1;
         joystick.frameCount++;
     }
-}
-
-function isClickInRectangle(clickX, clickY, rect) {
-    return (
-        clickX >= rect.x &&
-        clickX <= rect.x + rect.width &&
-        clickY >= rect.y &&
-        clickY <= rect.y + rect.height
-    );
 }
 
 function handleTouchStart(event) {
@@ -47,21 +68,14 @@ function handleTouchStart(event) {
 
 function handleTouchMove(event) {
     if (!joystick.enable || !joystick.active) return;
-    const outerRadius = joystick.outerRadius;
-    const outerRadius2 = outerRadius * outerRadius;
+    let now = performance.now();
+    if (now - joystick.lastMoveTime < 16) return;
+    joystick.lastMoveTime = now;
     for (let i = 0; i < event.touches.length; i++) {
         const touch = event.touches[i];
         if (touch.identifier !== joystick.touchId) continue;
-        let dx = touch.clientX - joystick.x;
-        let dy = touch.clientY - joystick.y;
-        let dist2 = dx * dx + dy * dy;
-        if (dist2 > outerRadius2) {
-            let invLen = outerRadius / Math.sqrt(dist2);
-            dx *= invLen;
-            dy *= invLen;
-        }
-        joystick.offsetX = dx;
-        joystick.offsetY = dy;
+        joystick.offsetX = touch.clientX - joystick.x;
+        joystick.offsetY = touch.clientY - joystick.y;
         joystick.frameCount = 0;
         break;
     }
@@ -74,6 +88,8 @@ function handleTouchEnd(event) {
                 joystick.active = false;
                 joystick.offsetX = 0;
                 joystick.offsetY = 0;
+                joystick.renderX = 0;
+                joystick.renderY = 0;
             }
         }
     }
@@ -100,15 +116,17 @@ function keyboard() {
     if (Math.abs(joystick.offsetY) >= joystickOuterRadius) {
         joystick.offsetY = joystick.offsetY > 0 ? r : -r;
     }
-    if (joystick.offsetY < 0) {
-        if (joystick.offsetX > 0) {
+    let dx = joystick.renderX;
+    let dy = joystick.renderY;
+    if (dy < 0) {
+        if (dx > 0) {
             player.direction = BACK_RIGHT;
-        } else if (joystick.offsetX < 0) {
+        } else if (dx < 0) {
             player.direction = BACK_LEFT;
         }
-    } else if (joystick.offsetX > 0) {
+    } else if (dx > 0) {
         player.direction = RIGHT;
-    } else if (joystick.offsetX < 0) {
+    } else if (dx < 0) {
         player.direction = LEFT;
     }
 }
@@ -122,16 +140,3 @@ window.addEventListener('keyup', function (event) {
         joystick.offsetY = 0;
     }
 });
-
-const joystick = {
-    x: screenWidth / 2,
-    y: screenHeight / 1.15,
-    outerRadius: joystickOuterRadius,
-    innerRadius: 20,
-    touchId: null,
-    offsetX: 0,
-    offsetY: 0,
-    enable: true,
-    active: false,
-    frameCount: 300
-};

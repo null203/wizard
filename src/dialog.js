@@ -379,29 +379,7 @@ const startDialog = Sprite({
     },
     close() {
         this.show = false;
-        lowHpTime = 0;
-        for (let boss in bossObj) {
-            if (bossObj.hasOwnProperty(boss)) {
-                bossObj[boss] = null;
-            }
-        }
-        createBackground();
-        initFlowField();
-        updateFlowField();
-        card_lightning.get();
-        // card_lightsaber.get();
-        // card_fireball.get();
-        // card_deathbook.get();
-        // card_poison.get();
-        // card_belt.get();
-        // card_hp_medicine.get();
-        // card_necklace.get();
-        // card_tooth.get();
-        // card_shield.get();
-        // card_magnet.get();
-        // card_axe.get();
-        // card_lance.get();
-        // card_small_shield.get();
+        gameInit();
     },
     onUp() {
         closeDialog(this);
