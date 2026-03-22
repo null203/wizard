@@ -248,16 +248,14 @@ function heapPop(heap) {
     return top;
 }
 
-function calcEnemyCount(dps) {
-    const maxDps = 1000;
+function getDPS(){
+    return Math.floor(scoreboard.damage / Math.max(1, statusBar.m * 60 + statusBar.s));
+}
+
+function getEnemyCount() {
+    const dps = getDPS();
+    const maxDps = 1200;
     const maxCount = 5;
     let count = Math.floor(dps / maxDps * maxCount);
     return Math.max(1, Math.min(maxCount, count));
 }
-
-// function test() {
-//     for (let i = 100; i < 2000; i = i + 100) {
-//         let c = calcEnemyCount(i);
-//         console.log('dps: ' + i + ', enemyCount: ' + c);
-//     }
-// }

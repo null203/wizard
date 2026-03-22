@@ -21,8 +21,8 @@ function searchEnemy(maxDistance) {
         let dx = enemy.x - player.x;
         let dy = enemy.y - player.y;
         // AABB快速裁剪
-        if (dx > maxDistance || dx < -maxDistance ||
-            dy > maxDistance || dy < -maxDistance) continue;
+        if (dx > maxDistance || dx < -maxDistance || dy > maxDistance || dy < -maxDistance
+            || enemy.hp <= 0 || enemy.ttl <= 60) continue;
         let dist2 = dx * dx + dy * dy;
         if (dist2 < minDist2) {
             minDist2 = dist2;

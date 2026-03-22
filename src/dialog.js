@@ -139,6 +139,7 @@ const mainDialog = Sprite({
             `攻击力: ${player.atk}`,
             `防御力: ${player.def}`,
             `暴击率: ${player.crit}%`,
+            `DPS: ${getDPS()}`,
         ]
     },
     render() {
@@ -410,7 +411,7 @@ const gameOverDialog = Sprite({
         return [
             `生存时间: ${statusBar.time}`,
             `等级: ${player.lv}`,
-            `DPS: ${Math.floor(scoreboard.damage / (statusBar.m * 60 + statusBar.s))}`,
+            `DPS: ${getDPS()}`,
             `击杀敌人: ${scoreboard.kill}`,
             `击杀BOSS: ${scoreboard.bossKill} / ${bossCount}`,
             `总伤害: ${scoreboard.damage}`,

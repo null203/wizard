@@ -718,7 +718,11 @@ const loop = GameLoop({
     frameCount: 0,
     update(dt) {
         for (let i = 0; i < dialogArr.length; i++) {
-            dialogArr[i].update(dt);
+            let dialog = dialogArr[i];
+            if (dialog.show) {
+                dialog.update(dt);
+                break;
+            }
         }
         if (paused) return;
         updateViewport(player);
@@ -849,15 +853,13 @@ function intervalHandle() {
             lowHpTime = 0;
         }
     }
-    let dps = Math.floor(scoreboard.damage / (statusBar.m * 60 + statusBar.s));
-    let count = calcEnemyCount(dps);
+    let count = getEnemyCount();
     if (enemyCount < count) {
         enemyCount++;
     }
-    // console.log('dps: ' + dps + ', enemyCount: ' + enemyCount);
 
     if (player.lv < 5) {
-        if (enemyPool.getAliveObjects().length < 8) {
+        if (enemyPool.getAliveObjects().length < 6) {
             wave(slime, skeleton);
         }
         return;
