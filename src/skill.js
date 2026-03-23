@@ -10,10 +10,6 @@ function multiDamageDetection(obj, enemy) {
         && !isExists(obj.targetArr, enemy);
 }
 
-function translate(offset = 0) {
-    context.translate(screenWidth / 2 - player.x + offset, screenHeight / 2 - player.y - objSize * 3 + offset);
-}
-
 function searchEnemy(maxDistance) {
     let minDist2 = maxDistance * maxDistance;
     let bestEnemy = null;

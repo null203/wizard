@@ -203,7 +203,7 @@ function createEnemy(data) {
 
     let alive = enemyPool.getAliveObjects().length;
     let ratio = alive / enemyPool.maxSize;
-    let chance = ratio * 30; // 最大30%
+    let chance = ratio * 20; // 最大20%
     let speed = (randInt(1, 100) <= chance) ? 2 : 1;
 
     return enemyPool.get({
@@ -442,7 +442,7 @@ function showDamage(x, y, damage, crit) {
         },
         render() {
             context.save();
-            context.translate(Math.round(screenWidth / 2 - player.x), Math.round(screenHeight / 2 - player.y - objSize * 3));
+            translate();
             context.fillStyle = 'white';
             context.font = `${Math.floor(13 * kw * crit)}px ${fontFamily}`;
             context.fillText(damage, -objSize * 3 / 5, -objSize / 2);
@@ -465,7 +465,7 @@ function showMsg(x, y, msg, ttl = 120) {
         },
         render() {
             context.save();
-            context.translate(Math.round(screenWidth / 2 - player.x + objSize / 2), Math.round(screenHeight / 2 - player.y + objSize / 2 - objSize * 3));
+            translate(objSize / 2);
             context.fillStyle = 'white';
             context.font = `${Math.floor(19 * kw)}px ${fontFamily}`;
             context.textAlign = 'center';
