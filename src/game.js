@@ -910,7 +910,7 @@ function intervalHandle() {
 async function loadAssets() {
     actx.resume();
     for (let url of audioUrls) {
-        const res = await fetch(url);
+        const res = await fetch(path + url);
         const arrayBuffer = await res.arrayBuffer();
         audioBuffers[url] = await actx.decodeAudioData(arrayBuffer);
         loadDialog.assetsLoaded++;
