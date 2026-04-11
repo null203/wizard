@@ -933,14 +933,19 @@ function gameInit() {
     // card_small_shield.get();
 }
 
-function unlockAudio() {
-    if (audioUnlocked) return;
-    const ctx = kontra.audioContext;
-    if (ctx && ctx.state === 'suspended') {
-        ctx.resume();
-        console.log('AudioContext 已解锁');
-    }
-    audioUnlocked = true;
+function unlockAllAudio() {
+    Object.values(audioAssets).forEach(audio => {
+        try {
+            audio.muted = true;
+            audio.play().then(() => {
+                audio.pause();
+                audio.currentTime = 0;
+                audio.muted = false;
+            });
+        } catch (e) {
+            console.warn('解锁失败', e);
+        }
+    });
 }
 
 load(
@@ -967,7 +972,7 @@ load(
     document.fonts.load(`12px ${fontFamily}`).then(function () {
         loadDialog.assetsLoaded++;
         canvas.addEventListener("touchstart", function (e) {
-            unlockAudio();
+            unlockAllAudio();
             handleTouchStart(e);
         }, { passive: true });
         canvas.addEventListener("touchstart", handleTouchStart, { passive: true });
