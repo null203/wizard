@@ -691,7 +691,7 @@ const player = Sprite({
                 let d = Math.sqrt(distance);
                 let unitX = deltaX / d;
                 let unitY = deltaY / d;
-                let offset = pixelSize / 2;
+                let offset = pixelSize * 0.5;
                 this.x += Math.round(unitX * offset);
                 this.y += Math.round(unitY * offset);
                 break;
@@ -704,7 +704,7 @@ const player = Sprite({
         }
         this.dx = Math.round(joystick.renderX * speedFactor);
         this.dy = Math.round(joystick.renderY * speedFactor);
-        if (this.dx != 0 || this.dy != 0){
+        if (this.dx != 0 || this.dy != 0) {
             this.lastDx = this.dx
             this.lastDy = this.dy;
         }
@@ -933,6 +933,16 @@ function gameInit() {
     // card_small_shield.get();
 }
 
+function unlockAudio() {
+    if (audioUnlocked) return;
+    const ctx = kontra.audioContext;
+    if (ctx && ctx.state === 'suspended') {
+        ctx.resume();
+        console.log('AudioContext 已解锁');
+    }
+    audioUnlocked = true;
+}
+
 load(
     '/audio/attack_slime.mp3',
     '/audio/attack_sword.mp3',
@@ -956,6 +966,10 @@ load(
 ).then(function () {
     document.fonts.load(`12px ${fontFamily}`).then(function () {
         loadDialog.assetsLoaded++;
+        canvas.addEventListener("touchstart", function (e) {
+            unlockAudio();
+            handleTouchStart(e);
+        }, { passive: true });
         canvas.addEventListener("touchstart", handleTouchStart, { passive: true });
         canvas.addEventListener("touchmove", handleTouchMove, { passive: true });
         canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
