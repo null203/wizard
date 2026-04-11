@@ -907,32 +907,6 @@ function intervalHandle() {
     }
 }
 
-function gameInit() {
-    lowHpTime = 0;
-    for (let boss in bossObj) {
-        if (bossObj.hasOwnProperty(boss)) {
-            bossObj[boss] = null;
-        }
-    }
-    createBackground();
-    initFlowField();
-    updateFlowField();
-    card_lightning.get();
-    // card_lightsaber.get();
-    // card_fireball.get();
-    // card_deathbook.get();
-    // card_poison.get();
-    // card_belt.get();
-    // card_hp_medicine.get();
-    // card_necklace.get();
-    // card_tooth.get();
-    // card_shield.get();
-    // card_magnet.get();
-    // card_axe.get();
-    // card_lance.get();
-    // card_small_shield.get();
-}
-
 function unlockAllAudio() {
     Object.values(audioAssets).forEach(audio => {
         try {
@@ -946,6 +920,33 @@ function unlockAllAudio() {
             console.warn('解锁失败', e);
         }
     });
+}
+
+function gameInit() {
+    lowHpTime = 0;
+    for (let boss in bossObj) {
+        if (bossObj.hasOwnProperty(boss)) {
+            bossObj[boss] = null;
+        }
+    }
+    createBackground();
+    initFlowField();
+    updateFlowField();
+    card_lightning.get();
+    unlockAllAudio();
+    // card_lightsaber.get();
+    // card_fireball.get();
+    // card_deathbook.get();
+    // card_poison.get();
+    // card_belt.get();
+    // card_hp_medicine.get();
+    // card_necklace.get();
+    // card_tooth.get();
+    // card_shield.get();
+    // card_magnet.get();
+    // card_axe.get();
+    // card_lance.get();
+    // card_small_shield.get();
 }
 
 load(
@@ -971,10 +972,6 @@ load(
 ).then(function () {
     document.fonts.load(`12px ${fontFamily}`).then(function () {
         loadDialog.assetsLoaded++;
-        canvas.addEventListener("touchstart", function (e) {
-            unlockAllAudio();
-            handleTouchStart(e);
-        }, { passive: true });
         canvas.addEventListener("touchstart", handleTouchStart, { passive: true });
         canvas.addEventListener("touchmove", handleTouchMove, { passive: true });
         canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
