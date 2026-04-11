@@ -225,4 +225,5 @@ function playAudio(url) {
     source.playbackRate.value = 1.0;
     source.connect(actx.destination);
     source.start();
+    console.log(source.buffer);
 }

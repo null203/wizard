@@ -910,7 +910,7 @@ function intervalHandle() {
 async function loadAssets() {
     actx.resume();
     for (let url of audioUrls) {
-        const res = await fetch(path + url);
+        const res = await fetch(path + url + '.mp3');
         const arrayBuffer = await res.arrayBuffer();
         audioBuffers[url] = await actx.decodeAudioData(arrayBuffer);
         loadDialog.assetsLoaded++;
@@ -921,20 +921,6 @@ async function loadAssets() {
         canvas.addEventListener("touchmove", handleTouchMove, { passive: true });
         canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
     });
-}
-
-async function loadAudio() {
-  try {
-    // Load an audio file
-    const response = await fetch("viper.mp3");
-    // Decode it
-    buffer = await audioCtx.decodeAudioData(await response.arrayBuffer());
-    const max = Math.floor(buffer.duration);
-    loopstartControl.setAttribute("max", max);
-    loopendControl.setAttribute("max", max);
-  } catch (err) {
-    console.error(`Unable to fetch the audio file. Error: ${err.message}`);
-  }
 }
 
 function gameInit() {

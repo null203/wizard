@@ -70,25 +70,25 @@ const dirs = [
 ];
 const actx = new (window.AudioContext || window.webkitAudioContext)();
 const audioUrls = [
-    '/audio/attack_slime.mp3',
-    '/audio/attack_sword.mp3',
-    '/audio/attack_bite.mp3',
-    '/audio/attack_blunt.mp3',
-    '/audio/attack_fork.mp3',
-    '/audio/attack_scythe.mp3',
-    '/audio/attack_spider.mp3',
-    '/audio/attack_big_sword.mp3',
-    '/audio/skill_lightning.mp3',
-    '/audio/skill_fireball.mp3',
-    '/audio/skill_book.mp3',
-    '/audio/skill_charge.mp3',
-    '/audio/skill_lightsaber1.mp3',
-    '/audio/skill_lightsaber2.mp3',
-    '/audio/skill_poison.mp3',
-    '/audio/skill_axe.mp3',
-    '/audio/skill_block.mp3',
-    '/audio/skill_lance.mp3',
-    '/audio/level_up.mp3'
+    '/audio/attack_slime',
+    '/audio/attack_sword',
+    '/audio/attack_bite',
+    '/audio/attack_blunt',
+    '/audio/attack_fork',
+    '/audio/attack_scythe',
+    '/audio/attack_spider',
+    '/audio/attack_big_sword',
+    '/audio/skill_lightning',
+    '/audio/skill_fireball',
+    '/audio/skill_book',
+    '/audio/skill_charge',
+    '/audio/skill_lightsaber1',
+    '/audio/skill_lightsaber2',
+    '/audio/skill_poison',
+    '/audio/skill_axe',
+    '/audio/skill_block',
+    '/audio/skill_lance',
+    '/audio/level_up'
 ];
 
 let enemyCount = 1;
