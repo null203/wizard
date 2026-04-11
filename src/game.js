@@ -949,40 +949,9 @@ function gameInit() {
     // card_small_shield.get();
 }
 
-// load(
-//     '/audio/attack_slime.mp3',
-//     '/audio/attack_sword.mp3',
-//     '/audio/attack_bite.mp3',
-//     '/audio/attack_blunt.mp3',
-//     '/audio/attack_fork.mp3',
-//     '/audio/attack_scythe.mp3',
-//     '/audio/attack_spider.mp3',
-//     '/audio/attack_big_sword.mp3',
-//     '/audio/skill_lightning.mp3',
-//     '/audio/skill_fireball.mp3',
-//     '/audio/skill_book.mp3',
-//     '/audio/skill_charge.mp3',
-//     '/audio/skill_lightsaber1.mp3',
-//     '/audio/skill_lightsaber2.mp3',
-//     '/audio/skill_poison.mp3',
-//     '/audio/skill_axe.mp3',
-//     '/audio/skill_block.mp3',
-//     '/audio/skill_lance.mp3',
-//     '/audio/level_up.mp3'
-// ).then(function () {
-//     document.fonts.load(`12px ${fontFamily}`).then(function () {
-//         loadDialog.assetsLoaded++;
-//         canvas.addEventListener("touchstart", handleTouchStart, { passive: true });
-//         canvas.addEventListener("touchmove", handleTouchMove, { passive: true });
-//         canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
-//     });
-// });
-
 loadDialog.numAssets = 20;
 loadDialog.assetsLoaded = 0;
-// on('assetLoaded', function () {
-//     loadDialog.assetsLoaded++;
-// });
 
 loop.start();
-openDialog(startDialog);
+loadAssets();
+openDialog(loadDialog);

@@ -369,6 +369,32 @@ const levelUpDialog = Sprite({
     }
 });
 
+const startDialog = Sprite({
+    x: 0,
+    y: 0,
+    width: screenWidth,
+    height: screenHeight,
+    show: false,
+    open() {
+        this.show = true;
+    },
+    close() {
+        this.show = false;
+        gameInit();
+    },
+    onUp() {
+        closeDialog(this);
+    },
+    render() {
+        context.fillStyle = 'black';
+        context.fillRect(0, 0, screenWidth, screenHeight);
+        context.fillStyle = 'white';
+        context.font = `${Math.floor(30 * kw)}px ${fontFamily}`;
+        context.textAlign = 'center';
+        context.fillText('点击开始游戏', screenWidth / 2, screenHeight / 2);
+    }
+});
+
 const gameOverDialog = Sprite({
     x: 0,
     y: 0,
@@ -499,7 +525,7 @@ const loadDialog = Sprite({
     },
     close() {
         this.show = false;
-        gameInit();
+        openDialog(startDialog);
     },
     render() {
         context.fillStyle = 'black';
@@ -508,33 +534,6 @@ const loadDialog = Sprite({
         context.font = `${Math.floor(30 * kw)}px ${fontFamily}`;
         context.textAlign = 'center';
         context.fillText(`Loading... (${this.assetsLoaded} / ${this.numAssets})`, screenWidth / 2, screenHeight / 2);
-    }
-});
-
-const startDialog = Sprite({
-    x: 0,
-    y: 0,
-    width: screenWidth,
-    height: screenHeight,
-    show: false,
-    open() {
-        this.show = true;
-    },
-    close() {
-        this.show = false;
-        openDialog(loadDialog);
-        loadAssets();
-    },
-    onUp() {
-        closeDialog(this);
-    },
-    render() {
-        context.fillStyle = 'black';
-        context.fillRect(0, 0, screenWidth, screenHeight);
-        context.fillStyle = 'white';
-        context.font = `${Math.floor(30 * kw)}px ${fontFamily}`;
-        context.textAlign = 'center';
-        context.fillText('点击开始游戏', screenWidth / 2, screenHeight / 2);
     }
 });
 
