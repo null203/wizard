@@ -923,6 +923,19 @@ async function loadAssets() {
     });
 }
 
+function unlockAudio() {
+    actx.resume();
+    const gain = actx.createGain();
+    gain.gain.value = 0;
+    gain.connect(actx.destination);
+    for (const url in audioUrls) {
+        const source = actx.createBufferSource();
+        source.buffer = audioBuffers[url];
+        source.connect(gain);
+        source.start(0);
+    }
+}
+
 function gameInit() {
     lowHpTime = 0;
     for (let boss in bossObj) {
@@ -934,6 +947,7 @@ function gameInit() {
     initFlowField();
     updateFlowField();
     card_lightning.get();
+    unlockAudio();
     // card_lightsaber.get();
     // card_fireball.get();
     // card_deathbook.get();
