@@ -68,6 +68,29 @@ const dirs = [
     [1, 0], [-1, 0], [0, 1], [0, -1],
     [1, 1], [-1, -1], [1, -1], [-1, 1]
 ];
+const actx = new (window.AudioContext || window.webkitAudioContext)();
+const audioUrls = [
+    '/audio/attack_slime.mp3',
+    '/audio/attack_sword.mp3',
+    '/audio/attack_bite.mp3',
+    '/audio/attack_blunt.mp3',
+    '/audio/attack_fork.mp3',
+    '/audio/attack_scythe.mp3',
+    '/audio/attack_spider.mp3',
+    '/audio/attack_big_sword.mp3',
+    '/audio/skill_lightning.mp3',
+    '/audio/skill_fireball.mp3',
+    '/audio/skill_book.mp3',
+    '/audio/skill_charge.mp3',
+    '/audio/skill_lightsaber1.mp3',
+    '/audio/skill_lightsaber2.mp3',
+    '/audio/skill_poison.mp3',
+    '/audio/skill_axe.mp3',
+    '/audio/skill_block.mp3',
+    '/audio/skill_lance.mp3',
+    '/audio/level_up.mp3'
+];
+
 let enemyCount = 1;
 let costField = [];
 let integrationField = [];
@@ -76,6 +99,7 @@ let flowLastPlayerX = 0;
 let flowLastPlayerY = 0;
 let lastMoveTime = 0;
 let audioUnlocked = false;
+let audioBuffers = {};
 
 const enemyPool = Pool({
     maxSize: 50,

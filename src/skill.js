@@ -70,7 +70,7 @@ const lightning = Sprite({
                 // 发动攻击
                 if (this.target != null) {
                     this.target = this.target.enemy;
-                    audioAssets['/audio/skill_lightning'].play();
+                    playAudio('/audio/skill_lightning');
                     player.attack(this.target, this.ratio);
                 }
             }
@@ -168,7 +168,7 @@ const fireball = Sprite({
                 this.dx = Math.cos(angle) * this.speed;
                 this.dy = Math.sin(angle) * this.speed;
             }
-            audioAssets['/audio/skill_fireball'].play();
+            playAudio('/audio/skill_fireball');
             this.active = true;
             clearArr(this.targetArr);
         }
@@ -256,7 +256,7 @@ const deathbook = Sprite({
         this.timeCount += dt;
         if (!this.active && this.timeCount > this.cd) {
             this.active = true;
-            audioAssets['/audio/skill_book'].play();
+            playAudio('/audio/skill_book');
             if (player.lastDx > 0) {
                 this.endAngle = Math.PI * 7 / 2;
                 this.step = 0.05;
@@ -340,11 +340,11 @@ const lightsaber = kontra.Sprite({
         this.particles.update();
         if (!this.active && this.timeCount > this.cd) {
             this.charge = true;
-            audioAssets['/audio/skill_charge'].play();
+            playAudio('/audio/skill_charge');
             if (this.radius < this.maxRadius) {
                 this.radius += 1 * kw;
             } else {
-                audioAssets['/audio/skill_charge'].play();
+                playAudio('/audio/skill_charge');
                 this.radius = 0;
                 this.op = 1;
             }
@@ -356,9 +356,9 @@ const lightsaber = kontra.Sprite({
             player.stop = true;
             this.charge = false;
             this.active = true;
-            audioAssets['/audio/skill_lightsaber1'].play();
+            playAudio('/audio/skill_lightsaber1');
             setTimeout(function () {
-                audioAssets['/audio/skill_lightsaber2'].play();
+                playAudio('/audio/skill_lightsaber2');
             }, 1300);
         }
         if (this.timeCount > this.cd + this.preTime + this.time) {
@@ -520,7 +520,7 @@ const poisonsmoke = Sprite({
                     this.particles.clear();
                     this.fly = false;
                     this.active = true;
-                    audioAssets['/audio/skill_poison'].play();
+                    playAudio('/audio/skill_poison');
                     break;
                 }
             }
@@ -646,7 +646,7 @@ const axe = Sprite({
                 let unitY = target.dy / target.distance;
                 this.dx = unitX * this.speed;
                 this.dy = unitY * this.speed;
-                audioAssets['/audio/skill_axe'].play();
+                playAudio('/audio/skill_axe');
                 this.active = true;
             }
         }
@@ -732,7 +732,7 @@ const lance = Sprite({
             } else {
                 this.playerLastDx = player.lastDx > 0 ? 10 : -10;
             }
-            audioAssets['/audio/skill_lance'].play();
+            playAudio('/audio/skill_lance');
         }
         if (this.active) {
             // playerLastDx 控制动画

@@ -207,7 +207,7 @@ function doesLineIntersectRect(startX, startY, endX, endY, rect) {
     );
 }
 
-function getDPS(){
+function getDPS() {
     return Math.floor(scoreboard.damage / Math.max(1, statusBar.m * 60 + statusBar.s));
 }
 
@@ -217,4 +217,12 @@ function getEnemyCount() {
     const maxCount = 5;
     let count = Math.floor(dps / maxDps * maxCount);
     return Math.max(1, Math.min(maxCount, count));
+}
+
+function playAudio(url) {
+    const source = actx.createBufferSource();
+    source.buffer = audioBuffers[url];
+    source.playbackRate.value = 1.0;
+    source.connect(actx.destination);
+    source.start();
 }

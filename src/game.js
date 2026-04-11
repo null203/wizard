@@ -226,7 +226,7 @@ function createEnemy(data) {
             let damage = 0;
             if (isExists(player.cards, card_small_shield)
                 && card_small_shield.block > randInt(1, 100)) {
-                audioAssets['/audio/skill_block'].play();
+                playAudio('/audio/skill_block');
                 showMsg(player.x, player.y, '格挡');
                 return;
             }
@@ -238,7 +238,7 @@ function createEnemy(data) {
             if (player.hp < 0) {
                 player.hp = 0;
             }
-            audioAssets[data.audioPath].play();
+            playAudio(data.audioPath);
             showDamage(player.x, player.y, damage, 1);
             scoreboard.receivedDamage += damage;
         },
@@ -628,7 +628,7 @@ const player = Sprite({
     },
     checkPoint() {
         if (this.point <= 0) return;
-        audioAssets['/audio/level_up'].play();
+        playAudio('/audio/level_up');
         showMsg(this.x - objSize / 3, this.y, 'LEVEL UP');
         openDialog(levelUpDialog);
     },
@@ -907,19 +907,34 @@ function intervalHandle() {
     }
 }
 
-function unlockAllAudio() {
-    Object.values(audioAssets).forEach(audio => {
-        try {
-            audio.muted = true;
-            audio.play().then(() => {
-                audio.pause();
-                audio.currentTime = 0;
-                audio.muted = false;
-            });
-        } catch (e) {
-            console.warn('解锁失败', e);
-        }
+async function loadAssets() {
+    actx.resume();
+    for (let url of audioUrls) {
+        const res = await fetch(url);
+        const arrayBuffer = await res.arrayBuffer();
+        audioBuffers[url] = await actx.decodeAudioData(arrayBuffer);
+        loadDialog.assetsLoaded++;
+    }
+    document.fonts.load(`12px ${fontFamily}`).then(function () {
+        loadDialog.assetsLoaded++;
+        canvas.addEventListener("touchstart", handleTouchStart, { passive: true });
+        canvas.addEventListener("touchmove", handleTouchMove, { passive: true });
+        canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
     });
+}
+
+async function loadAudio() {
+  try {
+    // Load an audio file
+    const response = await fetch("viper.mp3");
+    // Decode it
+    buffer = await audioCtx.decodeAudioData(await response.arrayBuffer());
+    const max = Math.floor(buffer.duration);
+    loopstartControl.setAttribute("max", max);
+    loopendControl.setAttribute("max", max);
+  } catch (err) {
+    console.error(`Unable to fetch the audio file. Error: ${err.message}`);
+  }
 }
 
 function gameInit() {
@@ -933,7 +948,6 @@ function gameInit() {
     initFlowField();
     updateFlowField();
     card_lightning.get();
-    unlockAllAudio();
     // card_lightsaber.get();
     // card_fireball.get();
     // card_deathbook.get();
@@ -949,41 +963,40 @@ function gameInit() {
     // card_small_shield.get();
 }
 
-load(
-    '/audio/attack_slime.mp3',
-    '/audio/attack_sword.mp3',
-    '/audio/attack_bite.mp3',
-    '/audio/attack_blunt.mp3',
-    '/audio/attack_fork.mp3',
-    '/audio/attack_scythe.mp3',
-    '/audio/attack_spider.mp3',
-    '/audio/attack_big_sword.mp3',
-    '/audio/skill_lightning.mp3',
-    '/audio/skill_fireball.mp3',
-    '/audio/skill_book.mp3',
-    '/audio/skill_charge.mp3',
-    '/audio/skill_lightsaber1.mp3',
-    '/audio/skill_lightsaber2.mp3',
-    '/audio/skill_poison.mp3',
-    '/audio/skill_axe.mp3',
-    '/audio/skill_block.mp3',
-    '/audio/skill_lance.mp3',
-    '/audio/level_up.mp3'
-).then(function () {
-    document.fonts.load(`12px ${fontFamily}`).then(function () {
-        loadDialog.assetsLoaded++;
-        canvas.addEventListener("touchstart", handleTouchStart, { passive: true });
-        canvas.addEventListener("touchmove", handleTouchMove, { passive: true });
-        canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
-    });
-});
-
+// load(
+//     '/audio/attack_slime.mp3',
+//     '/audio/attack_sword.mp3',
+//     '/audio/attack_bite.mp3',
+//     '/audio/attack_blunt.mp3',
+//     '/audio/attack_fork.mp3',
+//     '/audio/attack_scythe.mp3',
+//     '/audio/attack_spider.mp3',
+//     '/audio/attack_big_sword.mp3',
+//     '/audio/skill_lightning.mp3',
+//     '/audio/skill_fireball.mp3',
+//     '/audio/skill_book.mp3',
+//     '/audio/skill_charge.mp3',
+//     '/audio/skill_lightsaber1.mp3',
+//     '/audio/skill_lightsaber2.mp3',
+//     '/audio/skill_poison.mp3',
+//     '/audio/skill_axe.mp3',
+//     '/audio/skill_block.mp3',
+//     '/audio/skill_lance.mp3',
+//     '/audio/level_up.mp3'
+// ).then(function () {
+//     document.fonts.load(`12px ${fontFamily}`).then(function () {
+//         loadDialog.assetsLoaded++;
+//         canvas.addEventListener("touchstart", handleTouchStart, { passive: true });
+//         canvas.addEventListener("touchmove", handleTouchMove, { passive: true });
+//         canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
+//     });
+// });
 
 loadDialog.numAssets = 20;
 loadDialog.assetsLoaded = 0;
-on('assetLoaded', function () {
-    loadDialog.assetsLoaded++;
-});
+// on('assetLoaded', function () {
+//     loadDialog.assetsLoaded++;
+// });
 
 loop.start();
-openDialog(loadDialog);
+openDialog(startDialog);
