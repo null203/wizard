@@ -2,8 +2,6 @@ const { init, load, on, setDataPath, setAudioPath, audioAssets, initPointer, get
 
 const { canvas, context } = init();
 
-setDataPath(path);
-setAudioPath(path);
 initPointer();
 initKeys();
 

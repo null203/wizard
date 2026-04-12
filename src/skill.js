@@ -331,7 +331,7 @@ const lightsaber = kontra.Sprite({
         this.timeCount = 0;
         this.active = false;
         this.angle = Math.PI;
-        this.radius = 0;
+        this.radius = this.maxRadius;
         this.op = 1;
         this.targetArr = [];
     },
@@ -340,7 +340,6 @@ const lightsaber = kontra.Sprite({
         this.particles.update();
         if (!this.active && this.timeCount > this.cd) {
             this.charge = true;
-            playAudio('/audio/skill_charge');
             if (this.radius < this.maxRadius) {
                 this.radius += 1 * kw;
             } else {
@@ -365,7 +364,7 @@ const lightsaber = kontra.Sprite({
             this.timeCount = 0;
             this.active = false;
             this.angle = Math.PI;
-            this.radius = 0;
+            this.radius = this.maxRadius;
             this.op = 1;
             player.stop = false;
             clearArr(this.targetArr);
@@ -799,7 +798,3 @@ function initSkill() {
     }
 }
 initSkill();
-
-// setInterval(function () {
-//     console.log(fireball.particles.getAliveObjects().length);
-// }, 1000);

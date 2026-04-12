@@ -222,7 +222,6 @@ function getEnemyCount() {
 function playAudio(url) {
     const source = actx.createBufferSource();
     source.buffer = audioBuffers[url];
-    source.playbackRate.value = 1.0;
     source.connect(actx.destination);
     source.start();
 }

@@ -851,7 +851,7 @@ function intervalHandle() {
     if (player.hp < player.maxHp / 2) {
         lowHpTime++;
         if (lowHpTime >= 60) {
-            showMsg(player.x - objSize, player.y, '摧毁火把可以恢复生命值', 800);
+            showMsg(player.x - objSize, player.y, '生命值过低', 800);
             lowHpTime = 0;
         }
     }
@@ -910,7 +910,7 @@ function intervalHandle() {
 async function loadAssets() {
     actx.resume();
     for (let url of audioUrls) {
-        const res = await fetch(path + url + '.mp3');
+        const res = await fetch(path + url + '.mp3?v=' + window.APP_VERSION);
         const arrayBuffer = await res.arrayBuffer();
         audioBuffers[url] = await actx.decodeAudioData(arrayBuffer);
         loadDialog.assetsLoaded++;
@@ -946,8 +946,8 @@ function gameInit() {
     createBackground();
     initFlowField();
     updateFlowField();
-    card_lightning.get();
     unlockAudio();
+    card_lightning.get();
     // card_lightsaber.get();
     // card_fireball.get();
     // card_deathbook.get();
@@ -961,9 +961,10 @@ function gameInit() {
     // card_axe.get();
     // card_lance.get();
     // card_small_shield.get();
+    openDialog(tutorialDialog);
 }
 
-loadDialog.numAssets = 20;
+loadDialog.numAssets = audioUrls.length + 1;
 loadDialog.assetsLoaded = 0;
 
 loop.start();

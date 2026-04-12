@@ -391,7 +391,10 @@ const startDialog = Sprite({
         context.fillStyle = 'white';
         context.font = `${Math.floor(30 * kw)}px ${fontFamily}`;
         context.textAlign = 'center';
-        context.fillText('点击开始游戏', screenWidth / 2, screenHeight / 2);
+        context.fillText(`${window.APP_NAME}`, screenWidth / 2, screenHeight / 2 - objSize);
+        context.font = `${Math.floor(21 * kw)}px ${fontFamily}`;
+        context.fillText(`v${window.APP_VERSION}`, screenWidth / 2, screenHeight / 2);
+        context.fillText('点击开始游戏', screenWidth / 2, screenHeight / 2 + objSize);
     }
 });
 
@@ -740,6 +743,79 @@ const cardDetailDialog = Sprite({
     }
 });
 
+const tutorialDialog = Sprite({
+    x: 0,
+    y: 0,
+    width: screenWidth,
+    height: screenHeight,
+    show: false,
+    msgArr: [],
+    btnArr: [],
+    okBtn: {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0
+    },
+    open() {
+        this.show = true;
+    },
+    close() {
+        this.show = false;
+    },
+    onUp() {
+        let pointer = getPointer()
+        if (isClickRect(pointer, this.okBtn)) {
+            closeDialog(this);
+        }
+    },
+    update() {
+        this.msgArr = [
+            `[操作说明]`,
+            `移动端:触碰屏幕操作虚拟摇杆移动`,
+            `PC端:使用 A,W,S,D 或 ↑,↓,←,→ 移动`,
+            `[提示]`,
+            `移动到敌人附近会自动攻击`,
+            `拾取敌人掉的经验球，可以提升等级`,
+            `摧毁树/石头，有概率掉落生命恢复`,
+            `摧毁火把，必定掉落生命恢复`,
+            `生存下去吧...`,
+        ]
+    },
+    render() {
+        let x = 0;
+        let y = 0;
+        drawSubWindow(x, y, this.width, this.height);
+        let fontSize = Math.floor(16 * kw);
+        context.fillStyle = 'white';
+        context.font = `${fontSize}px ${fontFamily}`;
+        context.lineWidth = 1;
+        context.textAlign = 'left';
+        x = Math.floor(screenWidth / 2 - objSize * 5);
+        y += objSize / 2;
+        for (let line of this.msgArr) {
+            y += objSize;
+            context.fillText(line, x, y);
+        }
+        x = screenWidth / 2 - objSize * 5 / 2;
+        y += objSize;
+        this.drawOkBtn(x, y, objSize * 5, objSize);
+    },
+    drawOkBtn(x, y, width, height) {
+        this.okBtn.x = x;
+        this.okBtn.y = y;
+        this.okBtn.width = width;
+        this.okBtn.height = height;
+        context.strokeStyle = 'white';
+        context.lineWidth = 2 * kw;
+        context.strokeRect(x, y, width, height);
+        context.fillStyle = 'white';
+        context.textAlign = 'center';
+        context.font = `${Math.floor(16 * kw)}px ${fontFamily}`;
+        context.fillText('确定', screenWidth / 2, y + height * 0.7);
+    },
+});
+
 dialogArr.push(gameOverDialog);
 dialogArr.push(levelUpDialog);
 dialogArr.push(mainDialog);
@@ -747,3 +823,4 @@ dialogArr.push(startDialog);
 dialogArr.push(loadDialog);
 dialogArr.push(cardDialog);
 dialogArr.push(cardDetailDialog);
+dialogArr.push(tutorialDialog);
