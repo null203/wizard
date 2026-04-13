@@ -876,6 +876,69 @@ const card_lance = {
     ]
 };
 
+const card_storm = {
+    x: 0,
+    y: 0,
+    lv: 0,
+    type: CARD_TYPE_MAGIC,
+    maxLv: 5,
+    name: '暴风雪',
+    width: objSize * 2,
+    height: objSize * 2,
+    step: 40,
+    weight: 1,
+    getDetail() {
+        return [
+            `魔法: ${this.name}`,
+            `等级: ${this.lv} / ${this.maxLv}`,
+            `伤害倍率: ${storm.ratio}%`,
+            `攻击距离: ${storm.distance / kw}`,
+            `持续时间: ${storm.maxTime}秒`,
+            `冷却时间: ${storm.cd}秒`,
+            `释放暴风雪攻击敌人。`,
+        ];
+    },
+    getDescription() {
+        return [
+            `武器: ${this.name}`,
+            `等级: ${this.lv + 1} / ${this.maxLv}`,
+            `伤害倍率: ${storm.ratio + (this.lv == 0 ? 0 : this.step)}%`,
+            `攻击距离: ${storm.distance / kw}`,
+            `持续时间: ${storm.maxTime}秒`,
+            `冷却时间: ${storm.cd}秒`,
+            `释放暴风雪攻击敌人。`,
+        ];
+    },
+    remove() {
+        removeFromArr(cardArr, this);
+        removeFromArr(player.skill, storm);
+        player.atk -= 10;
+    },
+    get() {
+        this.lv++;
+        if (isExists(player.cards, this)) {
+            this.levelUp();
+        } else {
+            player.skill.push(storm);
+            player.cards.push(this);
+            this.weight++;
+        }
+    },
+    levelUp() {
+        storm.ratio += this.step;
+        if (this.lv == this.maxLv) {
+            removeFromArr(cardArr, this);
+        }
+    },
+    icon: [
+        0xffff, 0x8001, 0x83e1, 0x8731,
+        0x96f1, 0xbffd, 0xb7ed, 0xeff7,
+        0xffff, 0x8001, 0x9021, 0x8109,
+        0xa001, 0x8421, 0x8001, 0xffff,
+    ]
+};
+
+// 3级以后放入卡池
 function putItemCard() {
     let arr = [];
     arr.push(card_shield);
@@ -897,6 +960,7 @@ function putItemCard() {
     }
 }
 
+// 初始卡池
 function initCard() {
     clearArr(cardArr);
     cardArr.push(card_lightning);
@@ -905,6 +969,7 @@ function initCard() {
     cardArr.push(card_poison);
     cardArr.push(card_axe);
     cardArr.push(card_lance);
+    cardArr.push(card_storm);
     for (let card of cardArr) {
         card.lv = 0;
         if (card.type == CARD_TYPE_WEAPON) {

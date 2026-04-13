@@ -86,6 +86,7 @@ const audioUrls = [
     '/audio/skill_axe',
     '/audio/skill_block',
     '/audio/skill_lance',
+    '/audio/skill_storm',
     '/audio/level_up'
 ];
 
@@ -360,6 +361,46 @@ const boom = {
     ]
 };
 
+const skill_storm = {
+    mat: [
+        0x003ffc00, 0x007ffe00, 0x007ffe00, 0x03ffffc0,
+        0x07ffffe0, 0x07ffffe0, 0x3ffffffc, 0x7ffffffe,
+        0x7ffffffe, 0x3ffffffc, 0x00000000, 0x00000000,
+        0x00200020, 0x10200020, 0x10020800, 0x00000802,
+        0x01000000, 0x01000000, 0x00000040, 0x00000040,
+        0x00004000, 0x00004000, 0x00000000, 0x00000000,
+        0x00010000, 0x00400000, 0x08400010, 0x08000800,
+        0x00000800, 0x00000000, 0x00000000, 0x00000000,
+
+        0x003ffc00, 0x007ffe00, 0x007ffe00, 0x03ffffc0,
+        0x07ffffe0, 0x07ffffe0, 0x3ffffffc, 0x7ffffffe,
+        0x7ffffffe, 0x3ffffffc, 0x00000000, 0x02000000,
+        0x02000000, 0x00000000, 0x00000000, 0x00200020,
+        0x10220020, 0x10000802, 0x00000800, 0x01000000,
+        0x01000000, 0x00000040, 0x00000040, 0x00004000,
+        0x00004000, 0x00000000, 0x00010000, 0x00000000,
+        0x00400010, 0x08400000, 0x08000800, 0x00000800,
+
+        0x003ffc00, 0x007ffe00, 0x007ffe00, 0x03ffffc0,
+        0x07ffffe0, 0x07ffffe0, 0x3ffffffc, 0x7ffffffe,
+        0x7ffffffe, 0x3ffffffc, 0x08400802, 0x08000000,
+        0x00000000, 0x00000000, 0x02000000, 0x02000000,
+        0x00000000, 0x00000000, 0x00220020, 0x10200022,
+        0x10000800, 0x00000800, 0x01000000, 0x01000000,
+        0x00000040, 0x00000040, 0x00004000, 0x00004000,
+        0x00010000, 0x00000000, 0x00000010, 0x00400000,
+
+        0x003ffc00, 0x007ffe00, 0x007ffe00, 0x03ffffc0,
+        0x07ffffe0, 0x07ffffe0, 0x3ffffffc, 0x7ffffffe,
+        0x7ffffffe, 0x3ffffffc, 0x00000010, 0x00400810,
+        0x00400802, 0x08000000, 0x08000000, 0x00000000,
+        0x00000000, 0x02000000, 0x02000000, 0x00000000,
+        0x00020000, 0x00220020, 0x10200020, 0x10000802,
+        0x00000802, 0x01000000, 0x01000000, 0x00000040,
+        0x00000040, 0x00004000, 0x00014000, 0x00010000,
+    ]
+};
+
 const slime = {
     hp: 50,
     atk: 15,
@@ -427,7 +468,7 @@ const boss_skeleton = {
     exp: 7000,
     speed: 1.5,
     isBoss: true,
-    size: pixelSize * 2,
+    size: 2,
     audioPath: '/audio/attack_sword',
     mat: [
         // left
@@ -520,7 +561,7 @@ const boss_crab = {
     exp: 50000,
     speed: 1.5,
     isBoss: true,
-    size: pixelSize * 2,
+    size: 2,
     audioPath: '/audio/attack_bite',
     mat: [
         // left
@@ -613,7 +654,7 @@ const boss_tauren = {
     exp: 150000,
     speed: 1.5,
     isBoss: true,
-    size: pixelSize * 2,
+    size: 2,
     audioPath: '/audio/attack_big_sword',
     mat: [
         // left
@@ -736,7 +777,7 @@ const boss_alien = {
     exp: 0,
     speed: 1.5,
     isBoss: true,
-    size: pixelSize * 2,
+    size: 2,
     audioPath: '/audio/attack_blunt',
     mat: [
         // left

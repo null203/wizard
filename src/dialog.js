@@ -375,12 +375,17 @@ const startDialog = Sprite({
     width: screenWidth,
     height: screenHeight,
     show: false,
+    tutorial: true,
     open() {
         this.show = true;
     },
     close() {
         this.show = false;
-        gameInit();
+        initGame();
+        if (this.tutorial) {
+            openDialog(tutorialDialog);
+            this.tutorial = false;
+        }
     },
     onUp() {
         closeDialog(this);
@@ -391,9 +396,9 @@ const startDialog = Sprite({
         context.fillStyle = 'white';
         context.font = `${Math.floor(30 * kw)}px ${fontFamily}`;
         context.textAlign = 'center';
-        context.fillText(`${window.APP_NAME}`, screenWidth / 2, screenHeight / 2 - objSize);
-        context.font = `${Math.floor(21 * kw)}px ${fontFamily}`;
-        context.fillText(`v${window.APP_VERSION}`, screenWidth / 2, screenHeight / 2);
+        context.fillText(`${window.APP_NAME}`, screenWidth / 2, screenHeight / 2 - objSize * 1.5);
+        context.font = `${Math.floor(19 * kw)}px ${fontFamily}`;
+        context.fillText(`v${window.APP_VERSION}`, screenWidth / 2, screenHeight / 2 - objSize / 3);
         context.fillText('点击开始游戏', screenWidth / 2, screenHeight / 2 + objSize);
     }
 });
@@ -529,6 +534,7 @@ const loadDialog = Sprite({
     close() {
         this.show = false;
         openDialog(startDialog);
+        initHooks();
     },
     render() {
         context.fillStyle = 'black';

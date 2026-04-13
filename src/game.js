@@ -908,6 +908,9 @@ function intervalHandle() {
 }
 
 async function loadAssets() {
+    document.fonts.load(`12px ${fontFamily}`).then(function () {
+        loadDialog.assetsLoaded++;
+    });
     actx.resume();
     for (let url of audioUrls) {
         const res = await fetch(path + url + '.mp3?v=' + window.APP_VERSION);
@@ -915,12 +918,6 @@ async function loadAssets() {
         audioBuffers[url] = await actx.decodeAudioData(arrayBuffer);
         loadDialog.assetsLoaded++;
     }
-    document.fonts.load(`12px ${fontFamily}`).then(function () {
-        loadDialog.assetsLoaded++;
-        canvas.addEventListener("touchstart", handleTouchStart, { passive: true });
-        canvas.addEventListener("touchmove", handleTouchMove, { passive: true });
-        canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
-    });
 }
 
 function unlockAudio() {
@@ -936,7 +933,13 @@ function unlockAudio() {
     }
 }
 
-function gameInit() {
+function initHooks() {
+    canvas.addEventListener("touchstart", handleTouchStart, { passive: true });
+    canvas.addEventListener("touchmove", handleTouchMove, { passive: true });
+    canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
+}
+
+function initGame() {
     lowHpTime = 0;
     for (let boss in bossObj) {
         if (bossObj.hasOwnProperty(boss)) {
@@ -961,7 +964,7 @@ function gameInit() {
     // card_axe.get();
     // card_lance.get();
     // card_small_shield.get();
-    openDialog(tutorialDialog);
+    // card_storm.get();
 }
 
 loadDialog.numAssets = audioUrls.length + 1;

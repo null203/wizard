@@ -18,6 +18,7 @@
     <!-- <button onclick="save()">セーブ</button> -->
     <!-- <button onclick="load()">ロード</button> -->
     <button onclick="load16()">ロード16</button>
+    <button onclick="load32()">ロード32</button>
     <button onclick="rotate90()">rotate90</button>
     <button onclick="left16()">left16</button>
     <button onclick="right16()">right16</button>
@@ -147,6 +148,27 @@
                         let row = arr[y];
                         for (var x = 0; x < 16; x++) {
                             let isPixelOn = (row >> (16 - 1 - x)) & 1;
+                            bmp[y][x] = isPixelOn ? 1 : 0;
+                        }
+                    }
+                } catch (e) { }
+                drawBmp();
+            }
+        }
+
+        function load32() {
+            var ta = document.getElementById("tArea");
+            var code = ta.value;
+            let match = code.match(/const\s+(\w+)\s*=/);
+            if (match) {
+                let arr = [];
+                document.getElementById("key").value = match[1];
+                eval(code + '; arr = ' + match[1]);
+                try {
+                    for (var y = 0; y < 32; y++) {
+                        let row = arr[y];
+                        for (var x = 0; x < 32; x++) {
+                            let isPixelOn = (row >> (32 - 1 - x)) & 1;
                             bmp[y][x] = isPixelOn ? 1 : 0;
                         }
                     }

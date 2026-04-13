@@ -1,10 +1,10 @@
-function preprocessBitmap(data) {
+function preprocessBitmap(data, bitW) {
     let result = [];
     for (let y = 0; y < data.length; y++) {
         let row = data[y];
         let cols = [];
-        for (let x = 0; x < bitmapWidth; x++) {
-            if ((row >> (bitmapWidth - 1 - x)) & 1) {
+        for (let x = 0; x < bitW; x++) {
+            if ((row >> (bitW - 1 - x)) & 1) {
                 cols.push(x);
             }
         }
@@ -13,19 +13,19 @@ function preprocessBitmap(data) {
     return result;
 }
 
-function createBitmapCanvas(direction, data, size) {
-    const parsedData = preprocessBitmap(data);
-    const frameStart = (direction - 1) * bitmapHeight;
-    const frameEnd = direction * bitmapHeight;
+function createBitmapCanvas(direction, data, size, bitW, bitH) {
+    const parsedData = preprocessBitmap(data, bitW);
+    const frameStart = (direction - 1) * bitH;
+    const frameEnd = direction * bitH;
     const canvas = document.createElement('canvas');
-    canvas.width = bitmapWidth * size;
-    canvas.height = bitmapHeight * size;
+    size = size * pixelSize;
+    canvas.width = bitW * size;
+    canvas.height = bitH * size;
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = 'white';
     for (let y = frameStart; y < frameEnd; y++) {
         const row = parsedData[y];
         const drawY = (y - frameStart) * size;
-
         for (let i = 0; i < row.length; i++) {
             const x = row[i];
             ctx.fillRect(
@@ -39,13 +39,13 @@ function createBitmapCanvas(direction, data, size) {
     return canvas;
 }
 
-function drawBitmap(direction, obj, size = pixelSize) {
+function drawBitmap(direction, obj, size = 1, bitW = bitmapWidth, bitH = bitmapHeight) {
     let data = null;
-    const key = 'canvas_' + direction + '_' + size;
+    const key = `canvas_${direction}_${size}_${bitW}_${bitH}`;
     if (obj.hasOwnProperty(key)) {
         data = obj[key];
     } else {
-        data = createBitmapCanvas(direction, obj.mat, size);
+        data = createBitmapCanvas(direction, obj.mat, size, bitW, bitH);
         obj[key] = data;
     }
     const dx = screenWidth / 2 - player.x;

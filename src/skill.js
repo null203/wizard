@@ -302,6 +302,73 @@ const deathbook = Sprite({
     }
 });
 
+const storm = Sprite({
+    x: 0,
+    y: 0,
+    width: objSize * 4,
+    height: objSize * 1.8,
+    type: 'skill',
+    anchor: { x: 0.5, y: 1 },
+    ratio: 0,
+    cd: 3,
+    distance: objSize * 6,
+    active: false,
+    timeCount: 0,
+    maxTime: 10,
+    attackCount: 0,
+    frameCount: 0,
+    direction: 1,
+    step: 0.05,
+    init() {
+        this.ratio = 40;
+        this.active = false;
+        this.timeCount = 0;
+    },
+    update(dt) {
+        this.timeCount += dt;
+        if (!this.active && this.timeCount > this.cd) {
+            let target = searchEnemy(this.distance);
+            if (target != null) {
+                this.x = target.enemy.x;
+                this.y = target.enemy.y;
+                this.active = true;
+                playAudio('/audio/skill_storm');
+            }
+        }
+        if (!this.active) return;
+        this.frameCount++;
+        if (this.frameCount >= 16) {
+            this.frameCount = 0;
+            this.direction = (this.direction + 1) % 4 + 1;
+        }
+        this.attackCount++;
+        if (this.attackCount % 60 == 0) {
+            this.attackCount = 0;
+            for (let enemy of quadtree.get(this)) {
+                if (damageDetection(this, enemy)) {
+                    player.attack(enemy, this.ratio);
+                }
+            }
+        }
+        if (this.timeCount >= this.maxTime) {
+            this.active = false;
+            this.timeCount = 0;
+        }
+    },
+    render() {
+        if (this.active) {
+            // context.save();
+            // translate();
+            // context.beginPath();
+            // context.arc(this.width / 2, this.height / 2, this.radius, 0, Math.PI * 2);
+            // context.fillStyle = `rgba(255, 255, 255, 0.3)`;
+            // context.fill();
+            // context.restore();
+            drawBitmap(this.direction, skill_storm, 2, 32, 32);
+        }
+    }
+});
+
 const lightsaber = kontra.Sprite({
     x: screenWidth / 2,
     y: screenHeight / 2 - objSize * 3,
@@ -787,6 +854,7 @@ const lance = Sprite({
 skillArr.push(lightning);
 skillArr.push(fireball);
 skillArr.push(deathbook);
+skillArr.push(storm);
 skillArr.push(lightsaber);
 skillArr.push(poisonsmoke);
 skillArr.push(axe);
