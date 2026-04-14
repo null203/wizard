@@ -110,13 +110,13 @@ function createBackground() {
                 hp = 100;
                 maxHp = 100;
                 def = 120;
-                dr = 0.35;
+                dr = 0.4;
             }
             if (direction >= 5 && direction <= 6) {
                 hp = 100;
                 maxHp = 100;
                 def = 90;
-                dr = 0.2;
+                dr = 0.25;
             }
             backgroundArr.push(Sprite({
                 hp: hp,
@@ -210,6 +210,7 @@ function createEnemy(data) {
         hp: data.hp,
         atk: data.atk,
         def: data.def,
+        dr: data.def / 100,
         exp: data.exp,
         x: x,
         y: y,
@@ -243,6 +244,7 @@ function createEnemy(data) {
             scoreboard.receivedDamage += damage;
         },
         underAttack(damage) {
+            damage = Math.floor(damage * (1 - this.dr));
             if (damage < 1) {
                 damage = 1;
             }

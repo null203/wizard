@@ -743,7 +743,7 @@ const devil = {
 const reaper = {
     hp: 400,
     atk: 60,
-    def: 12,
+    def: 15,
     exp: 8500,
     audioPath: '/audio/attack_scythe',
     mat: [

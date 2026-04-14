@@ -339,7 +339,7 @@ const blizzard = Sprite({
         this.frameCount++;
         if (this.frameCount >= 16) {
             this.frameCount = 0;
-            this.direction = (this.direction + 1) % 4 + 1;
+            this.direction = this.direction % 4 + 1;
         }
         this.attackCount++;
         if (this.attackCount >= 30) {
