@@ -302,11 +302,11 @@ const deathbook = Sprite({
     }
 });
 
-const storm = Sprite({
+const blizzard = Sprite({
     x: 0,
     y: 0,
     width: objSize * 4,
-    height: objSize * 1.8,
+    height: objSize * 3,
     type: 'skill',
     anchor: { x: 0.5, y: 1 },
     ratio: 0,
@@ -320,7 +320,7 @@ const storm = Sprite({
     direction: 1,
     step: 0.05,
     init() {
-        this.ratio = 40;
+        this.ratio = 20;
         this.active = false;
         this.timeCount = 0;
     },
@@ -332,7 +332,7 @@ const storm = Sprite({
                 this.x = target.enemy.x;
                 this.y = target.enemy.y;
                 this.active = true;
-                playAudio('/audio/skill_storm');
+                playAudio('/audio/skill_blizzard');
             }
         }
         if (!this.active) return;
@@ -342,7 +342,7 @@ const storm = Sprite({
             this.direction = (this.direction + 1) % 4 + 1;
         }
         this.attackCount++;
-        if (this.attackCount % 60 == 0) {
+        if (this.attackCount >= 30) {
             this.attackCount = 0;
             for (let enemy of quadtree.get(this)) {
                 if (damageDetection(this, enemy)) {
@@ -364,7 +364,7 @@ const storm = Sprite({
             // context.fillStyle = `rgba(255, 255, 255, 0.3)`;
             // context.fill();
             // context.restore();
-            drawBitmap(this.direction, skill_storm, 2, 32, 32);
+            drawBitmap(this.direction, skill_blizzard, 2, 32, 32);
         }
     }
 });
@@ -854,7 +854,7 @@ const lance = Sprite({
 skillArr.push(lightning);
 skillArr.push(fireball);
 skillArr.push(deathbook);
-skillArr.push(storm);
+skillArr.push(blizzard);
 skillArr.push(lightsaber);
 skillArr.push(poisonsmoke);
 skillArr.push(axe);

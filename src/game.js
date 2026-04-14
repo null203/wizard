@@ -964,7 +964,7 @@ function initGame() {
     // card_axe.get();
     // card_lance.get();
     // card_small_shield.get();
-    // card_storm.get();
+    // card_blizzard.get();
 }
 
 loadDialog.numAssets = audioUrls.length + 1;

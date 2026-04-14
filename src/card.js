@@ -876,7 +876,7 @@ const card_lance = {
     ]
 };
 
-const card_storm = {
+const card_blizzard = {
     x: 0,
     y: 0,
     lv: 0,
@@ -885,16 +885,16 @@ const card_storm = {
     name: '暴风雪',
     width: objSize * 2,
     height: objSize * 2,
-    step: 40,
+    step: 20,
     weight: 1,
     getDetail() {
         return [
             `魔法: ${this.name}`,
             `等级: ${this.lv} / ${this.maxLv}`,
-            `伤害倍率: ${storm.ratio}%`,
-            `攻击距离: ${storm.distance / kw}`,
-            `持续时间: ${storm.maxTime}秒`,
-            `冷却时间: ${storm.cd}秒`,
+            `伤害倍率: ${blizzard.ratio}%`,
+            `攻击距离: ${blizzard.distance / kw}`,
+            `持续时间: ${blizzard.maxTime}秒`,
+            `冷却时间: ${blizzard.cd}秒`,
             `释放暴风雪攻击敌人。`,
         ];
     },
@@ -902,30 +902,29 @@ const card_storm = {
         return [
             `武器: ${this.name}`,
             `等级: ${this.lv + 1} / ${this.maxLv}`,
-            `伤害倍率: ${storm.ratio + (this.lv == 0 ? 0 : this.step)}%`,
-            `攻击距离: ${storm.distance / kw}`,
-            `持续时间: ${storm.maxTime}秒`,
-            `冷却时间: ${storm.cd}秒`,
+            `伤害倍率: ${blizzard.ratio + (this.lv == 0 ? 0 : this.step)}%`,
+            `攻击距离: ${blizzard.distance / kw}`,
+            `持续时间: ${blizzard.maxTime}秒`,
+            `冷却时间: ${blizzard.cd}秒`,
             `释放暴风雪攻击敌人。`,
         ];
     },
     remove() {
         removeFromArr(cardArr, this);
-        removeFromArr(player.skill, storm);
-        player.atk -= 10;
+        removeFromArr(player.skill, blizzard);
     },
     get() {
         this.lv++;
         if (isExists(player.cards, this)) {
             this.levelUp();
         } else {
-            player.skill.push(storm);
+            player.skill.push(blizzard);
             player.cards.push(this);
             this.weight++;
         }
     },
     levelUp() {
-        storm.ratio += this.step;
+        blizzard.ratio += this.step;
         if (this.lv == this.maxLv) {
             removeFromArr(cardArr, this);
         }
@@ -969,7 +968,7 @@ function initCard() {
     cardArr.push(card_poison);
     cardArr.push(card_axe);
     cardArr.push(card_lance);
-    cardArr.push(card_storm);
+    cardArr.push(card_blizzard);
     for (let card of cardArr) {
         card.lv = 0;
         if (card.type == CARD_TYPE_WEAPON) {

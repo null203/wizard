@@ -86,7 +86,7 @@ const audioUrls = [
     '/audio/skill_axe',
     '/audio/skill_block',
     '/audio/skill_lance',
-    '/audio/skill_storm',
+    '/audio/skill_blizzard',
     '/audio/level_up'
 ];
 
@@ -361,7 +361,7 @@ const boom = {
     ]
 };
 
-const skill_storm = {
+const skill_blizzard = {
     mat: [
         0x003ffc00, 0x007ffe00, 0x007ffe00, 0x03ffffc0,
         0x07ffffe0, 0x07ffffe0, 0x3ffffffc, 0x7ffffffe,
