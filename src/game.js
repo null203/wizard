@@ -259,7 +259,7 @@ function createEnemy(data) {
             if (this.ttl < 60) {
                 return;
             }
-            if (this.hp <= 0) {
+            if (this.hp <= 0 && !this.isDead) {
                 createItem(this.x, this.y, this.exp, exp_ball);
                 this.ttl = 60;
                 this.isDead = true;
@@ -911,7 +911,6 @@ async function loadAssets() {
     document.fonts.load(`12px ${fontFamily}`).then(function () {
         loadDialog.assetsLoaded++;
     });
-    actx.resume();
     for (let url of audioUrls) {
         const res = await fetch(path + url + '.mp3?v=' + window.APP_VERSION);
         const arrayBuffer = await res.arrayBuffer();

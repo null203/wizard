@@ -771,7 +771,7 @@ const reaper = {
 };
 
 const boss_alien = {
-    hp: 60000,
+    hp: 30000,
     atk: 120,
     def: 25,
     exp: 0,
