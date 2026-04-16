@@ -1,4 +1,4 @@
-const { init, load, on, setDataPath, setAudioPath, audioAssets, initPointer, getPointer, Sprite, GameLoop, Quadtree, randInt, Button, track, untrack, Pool, initKeys } = kontra;
+const { init, on, initPointer, getPointer, Sprite, GameLoop, Quadtree, randInt, Button, track, untrack, Pool, initKeys } = kontra;
 
 const { canvas, context } = init();
 

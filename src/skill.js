@@ -44,6 +44,7 @@ function searchEnemy(maxDistance) {
 const lightning = Sprite({
     x: 0,
     y: 0,
+    type: 'skill',
     ratio: 0,
     time: 1,
     cd: 2,
@@ -374,6 +375,7 @@ const lightsaber = kontra.Sprite({
     y: screenHeight / 2 - objSize * 3,
     width: 5 * pixelSize,
     height: 180 * pixelSize,
+    type: 'skill',
     ratio: 0,
     preTime: 3,
     time: 0.6,
