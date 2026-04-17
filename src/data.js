@@ -89,7 +89,7 @@ const audioUrls = [
     '/audio/skill_blizzard',
     '/audio/level_up',
     '/audio/click_button',
-    '/audio/healing',
+    '/audio/drink',
 ];
 
 let enemyCount = 1;

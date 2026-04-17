@@ -664,7 +664,7 @@ const player = Sprite({
             this.hp = this.maxHp;
         }
         showDamage(this.x, this.y, '+' + hp, 1);
-        playAudio('/audio/healing');
+        playAudio('/audio/drink');
     },
     isAlive() {
         return this.hp > 0;
