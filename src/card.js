@@ -37,7 +37,6 @@ const card_lightning = {
             `等级: ${this.lv} / ${this.maxLv}`,
             `伤害倍率: ${lightning.ratio}%`,
             `攻击距离: ${Math.round(lightning.radius / kw)}`,
-            `持续时间: ${lightning.time}秒`,
             `冷却时间: ${lightning.cd}秒`,
             `发射强力闪电，攻击最近的敌人。`,
         ];
@@ -48,7 +47,6 @@ const card_lightning = {
             `等级: ${this.lv + 1} / ${this.maxLv}`,
             `伤害倍率: ${lightning.ratio + (this.lv == 0 ? 0 : this.step)}%`,
             `攻击距离: ${Math.round(lightning.radius / kw)}`,
-            `持续时间: ${lightning.time}秒`,
             `冷却时间: ${lightning.cd}秒`,
             `发射强力闪电，攻击最近的敌人。`,
         ];
