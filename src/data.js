@@ -220,7 +220,7 @@ const wizard = {
     y: Math.round((worldLimit - objSize) / 2),
     maxHp: 100,
     atk: 60,
-    def: 10,
+    def: 5,
     crit: 10,
     maxExp: maxExp[0],
     lv: 1,
@@ -773,7 +773,7 @@ const reaper = {
 };
 
 const boss_alien = {
-    hp: 300000,
+    hp: 30000,
     atk: 120,
     def: 25,
     exp: 0,

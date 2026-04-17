@@ -52,14 +52,14 @@ function octaveNoise(x, y, octaves, persistence) {
     let frequency = 1;
     let amplitude = 1;
     let maxValue = 0;  // 用于归一化结果
-    
+
     for (let i = 0; i < octaves; i++) {
         total += noise(x * frequency, y * frequency) * amplitude;
         maxValue += amplitude;
         amplitude *= persistence;
         frequency *= 2;
     }
-    
+
     return (total / maxValue + 1) / 2;  // 归一化结果，使结果在0-1之间
 }
 
@@ -80,7 +80,12 @@ function generatePoints() {
             value = Math.pow(value, 2);
 
             if (value > lowThreshold && value < highThreshold) {
-                points.push({ x, y });
+                points.push({
+                    x: x,
+                    y: y,
+                    width: objSize,
+                    height: objSize
+                });
             }
         }
     }

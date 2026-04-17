@@ -110,13 +110,13 @@ function createBackground() {
                 hp = 100;
                 maxHp = 100;
                 def = 120;
-                dr = 0.35;
+                dr = 0.45;
             }
             if (direction >= 5 && direction <= 6) {
                 hp = 100;
                 maxHp = 100;
                 def = 90;
-                dr = 0.25;
+                dr = 0.35;
             }
             backgroundArr.push(Sprite({
                 hp: hp,
@@ -213,8 +213,8 @@ function createEnemy(data) {
         exp: data.exp,
         x: x,
         y: y,
-        width: objSize * (data.size ? data.size / pixelSize : 1),
-        height: objSize * (data.size ? data.size / pixelSize : 1),
+        width: objSize * (data.size ? data.size : 1),
+        height: objSize * (data.size ? data.size : 1),
         anchor: { x: 0.5, y: 0.5 },
         type: data.isBoss ? 'boss' : 'enemy',
         direction: LEFT,
@@ -656,6 +656,8 @@ const player = Sprite({
                 return;
             }
             this.maxExp = maxExp[this.lv - 1];
+            this.atk += 1;
+            this.def += 1;
         }
     },
     addHp(hp) {

@@ -287,7 +287,7 @@ const card_shield = {
     width: objSize * 2,
     height: objSize * 2,
     def: 10,
-    step: 5,
+    step: 3,
     weight: 1,
     getDetail() {
         return [
@@ -341,7 +341,7 @@ const card_small_shield = {
     width: objSize * 2,
     height: objSize * 2,
     def: 5,
-    step: 2,
+    step: 1,
     block: 19,
     weight: 1,
     getDetail() {
@@ -400,7 +400,7 @@ const card_belt = {
     name: '力量腰带',
     width: objSize * 2,
     height: objSize * 2,
-    atk: 10,
+    atk: 5,
     step: 5,
     weight: 1,
     getDetail() {
@@ -607,7 +607,7 @@ const card_tooth = {
             this.levelUp();
         } else {
             player.cards.push(this);
-            player.atk += 5;
+            player.atk += 3;
             player.crit += 5;
             this.weight++;
         }
@@ -636,7 +636,7 @@ const card_necklace = {
     name: '宝石项链',
     width: objSize * 2,
     height: objSize * 2,
-    step: 2,
+    step: 1,
     hp: 5,
     weight: 1,
     getDetail() {
