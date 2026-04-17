@@ -278,12 +278,18 @@ const deathbook = Sprite({
                 this.angle -= Math.PI * 2;
                 this.count++;
                 clearArr(this.targetArr);
+                if (this.count < this.maxCount) {
+                    playAudio('/audio/skill_book');
+                }
             }
         } else {
             if (this.angle < this.endAngle) {
                 this.angle += Math.PI * 2;
                 this.count++;
                 clearArr(this.targetArr);
+                if (this.count < this.maxCount) {
+                    playAudio('/audio/skill_book');
+                }
             }
         }
         this.angle += this.step;
@@ -311,7 +317,7 @@ const blizzard = Sprite({
     type: 'skill',
     anchor: { x: 0.5, y: 1 },
     ratio: 0,
-    cd: 3,
+    cd: 5,
     distance: objSize * 6,
     active: false,
     timeCount: 0,
@@ -320,6 +326,7 @@ const blizzard = Sprite({
     frameCount: 0,
     direction: 1,
     step: 0.05,
+    targetArr: [],
     init() {
         this.ratio = 20;
         this.active = false;
@@ -345,15 +352,27 @@ const blizzard = Sprite({
         this.attackCount++;
         if (this.attackCount >= 30) {
             this.attackCount = 0;
+            for (let e of this.targetArr) {
+                e.isSlow = false;
+            }
+            clearArr(this.targetArr);
             for (let enemy of quadtree.get(this)) {
                 if (damageDetection(this, enemy)) {
                     player.attack(enemy, this.ratio);
+                    if (enemy.type == 'enemy' || enemy.type == 'boss' && !isExists(this.targetArr, enemy)) {
+                        enemy.isSlow = true;
+                        this.targetArr.push(enemy);
+                    }
                 }
             }
         }
         if (this.timeCount >= this.maxTime) {
             this.active = false;
             this.timeCount = 0;
+            for (let e of this.targetArr) {
+                e.isSlow = false;
+            }
+            clearArr(this.targetArr);
         }
     },
     render() {
@@ -378,7 +397,7 @@ const lightsaber = kontra.Sprite({
     type: 'skill',
     ratio: 0,
     preTime: 3,
-    time: 0.6,
+    time: 0.5,
     cd: 5,
     angle: Math.PI,
     rotationSpeed: 0.1,

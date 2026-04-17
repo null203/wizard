@@ -87,7 +87,9 @@ const audioUrls = [
     '/audio/skill_block',
     '/audio/skill_lance',
     '/audio/skill_blizzard',
-    '/audio/level_up'
+    '/audio/level_up',
+    '/audio/click_button',
+    '/audio/healing',
 ];
 
 let enemyCount = 1;

@@ -110,13 +110,13 @@ function createBackground() {
                 hp = 100;
                 maxHp = 100;
                 def = 120;
-                dr = 0.5;
+                dr = 0.35;
             }
             if (direction >= 5 && direction <= 6) {
                 hp = 100;
                 maxHp = 100;
                 def = 90;
-                dr = 0.35;
+                dr = 0.25;
             }
             backgroundArr.push(Sprite({
                 hp: hp,
@@ -222,6 +222,7 @@ function createEnemy(data) {
         timeCount: 0,
         ttl: Infinity,
         isDead: false,
+        isSlow: false,
         attack() {
             let damage = 0;
             if (isExists(player.cards, card_small_shield)
@@ -346,8 +347,9 @@ function createEnemy(data) {
             // 归一化速度
             let len = Math.sqrt(dx * dx + dy * dy);
             if (len > 0) {
-                this.dx = (dx / len) * this.speed;
-                this.dy = (dy / len) * this.speed;
+                let speed = this.isSlow ? this.speed / 2 : this.speed;
+                this.dx = (dx / len) * speed;
+                this.dy = (dy / len) * speed;
             } else {
                 this.dx = 0;
                 this.dy = 0;
@@ -662,6 +664,7 @@ const player = Sprite({
             this.hp = this.maxHp;
         }
         showDamage(this.x, this.y, '+' + hp, 1);
+        playAudio('/audio/healing');
     },
     isAlive() {
         return this.hp > 0;

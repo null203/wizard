@@ -119,6 +119,7 @@ const mainDialog = Sprite({
         this.show = true;
         this.btnArr = [];
         this.selectedCard = null;
+        playAudio('/audio/click_button');
     },
     close() {
         this.show = false;
@@ -128,6 +129,7 @@ const mainDialog = Sprite({
         for (let btn of this.btnArr) {
             if (isClickRect(pointer, btn)) {
                 btn.onPressed();
+                playAudio('/audio/click_button');
             }
         }
     },
@@ -267,6 +269,7 @@ const levelUpDialog = Sprite({
                 this.resetCount--;
                 this.cards = getCards();
                 this.selectedCard = this.cards[0];
+                playAudio('/audio/click_button');
                 return;
             }
             if (isClickRect(pointer, this.okBtn)) {
@@ -277,11 +280,13 @@ const levelUpDialog = Sprite({
                 } else {
                     openSubDialog(this, cardDialog);
                 }
+                playAudio('/audio/click_button');
                 return;
             }
             for (let card of this.cards) {
                 if (isClickRect(pointer, card)) {
                     this.selectedCard = card;
+                    playAudio('/audio/click_button');
                 }
             }
         }
@@ -569,6 +574,7 @@ const cardDialog = Sprite({
         for (let btn of this.btnArr) {
             if (isClickRect(pointer, btn)) {
                 btn.onPressed();
+                playAudio('/audio/click_button');
             }
         }
     },
@@ -704,6 +710,7 @@ const cardDetailDialog = Sprite({
         for (let btn of this.btnArr) {
             if (isClickRect(pointer, btn)) {
                 btn.onPressed();
+                playAudio('/audio/click_button');
             }
         }
     },
@@ -773,6 +780,7 @@ const tutorialDialog = Sprite({
         let pointer = getPointer()
         if (isClickRect(pointer, this.okBtn)) {
             closeDialog(this);
+            playAudio('/audio/click_button');
         }
     },
     update() {

@@ -893,7 +893,7 @@ const card_blizzard = {
             `攻击距离: ${Math.round(blizzard.distance / kw)}`,
             `持续时间: ${blizzard.maxTime}秒`,
             `冷却时间: ${blizzard.cd}秒`,
-            `释放暴风雪攻击敌人。`,
+            `召唤暴风雪攻击敌人，并造成减速效果。`,
         ];
     },
     getDescription() {
@@ -904,7 +904,7 @@ const card_blizzard = {
             `攻击距离: ${Math.round(blizzard.distance / kw)}`,
             `持续时间: ${blizzard.maxTime}秒`,
             `冷却时间: ${blizzard.cd}秒`,
-            `释放暴风雪攻击敌人。`,
+            `召唤暴风雪攻击敌人，并造成减速效果。`,
         ];
     },
     remove() {
