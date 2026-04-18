@@ -529,7 +529,7 @@ const spider = {
 
 const snake = {
     hp: 200,
-    atk: 43,
+    atk: 45,
     def: 5,
     exp: 1000,
     audioPath: '/audio/attack_bite',
@@ -592,7 +592,7 @@ const boss_crab = {
 
 const mummy = {
     hp: 300,
-    atk: 48,
+    atk: 53,
     def: 5,
     exp: 2600,
     audioPath: '/audio/attack_blunt',
@@ -622,7 +622,7 @@ const mummy = {
 
 const orc = {
     hp: 300,
-    atk: 53,
+    atk: 58,
     def: 8,
     exp: 3000,
     audioPath: '/audio/attack_blunt',
@@ -685,7 +685,7 @@ const boss_tauren = {
 
 const fox = {
     hp: 320,
-    atk: 58,
+    atk: 75,
     def: 10,
     exp: 5200,
     audioPath: '/audio/attack_scythe',
@@ -715,7 +715,7 @@ const fox = {
 
 const devil = {
     hp: 350,
-    atk: 73,
+    atk: 80,
     def: 12,
     exp: 5500,
     audioPath: '/audio/attack_fork',

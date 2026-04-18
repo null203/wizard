@@ -830,23 +830,21 @@ function wave(...args) {
 }
 
 function respawnEnemy() {
-    if (enemyPool.getAliveObjects().length == enemyPool.maxSize) {
-        for (let enemy of enemyPool.getAliveObjects()) {
-            if (!isVisible(enemy) && enemy.type != 'boss') {
-                let distance = (enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2;
-                if (distance > screenHeight * screenHeight * 0.64) {
-                    enemy.ttl = 0;
-                    enemy.update();
-                }
+    for (let enemy of enemyPool.getAliveObjects()) {
+        if (!isVisible(enemy) && enemy.type != 'boss') {
+            let distance = (enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2;
+            if (distance > screenHeight * screenHeight * 0.64) {
+                enemy.ttl = 0;
+                enemy.update();
             }
         }
-        respawnTime = 0;
     }
+    respawnTime = 0;
 }
 
 function intervalHandle() {
     if (statusBar.m < 15) {
-        if (respawnTime >= 5) {
+        if (respawnTime >= 5 && enemyPool.getAliveObjects().length == enemyPool.maxSize) {
             respawnEnemy();
         } else {
             respawnTime++;
@@ -870,6 +868,8 @@ function intervalHandle() {
     if (player.lv < 5) {
         if (enemyPool.getAliveObjects().length < 6) {
             wave(slime, skeleton);
+        } else {
+            respawnEnemy();
         }
         return;
     }
