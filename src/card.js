@@ -764,9 +764,7 @@ const card_magnet = {
     width: objSize * 2,
     height: objSize * 2,
     step: 5,
-    get base() {
-        return this.step * 3;
-    },
+    base: 5,
     weight: 1,
     getDetail() {
         return [
@@ -793,7 +791,7 @@ const card_magnet = {
             this.levelUp();
         } else {
             player.cards.push(this);
-            player.pickupDistance += this.base;
+            player.pickupDistance += (this.base + this.step * kw);
             this.weight++;
         }
         for (let item of itemPool.getAliveObjects()) {
@@ -801,7 +799,7 @@ const card_magnet = {
         }
     },
     levelUp() {
-        player.pickupDistance += this.step;
+        player.pickupDistance += (this.step * kw);
         if (this.lv == this.maxLv) {
             removeFromArr(cardArr, this);
         }
