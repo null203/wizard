@@ -763,13 +763,16 @@ const card_magnet = {
     name: '磁铁',
     width: objSize * 2,
     height: objSize * 2,
-    step: 10,
+    step: 5,
+    get base() {
+        return this.step * 3;
+    },
     weight: 1,
     getDetail() {
         return [
             `装备: ${this.name}`,
             `等级: ${this.lv} / ${this.maxLv}`,
-            `拾取距离 + ${this.lv * 10}`,
+            `拾取距离 + ${this.lv * this.step + this.base}`,
         ];
     },
     getDescription() {
@@ -777,12 +780,12 @@ const card_magnet = {
             `装备: ${this.name}`,
             `等级: ${this.lv + 1} / ${this.maxLv}`,
             `立即吸取地图上所有的道具。`,
-            `拾取距离 + ${(this.lv + 1) * 10}`,
+            `拾取距离 + ${(this.lv + 1) * this.step + this.base}`,
         ];
     },
     remove() {
         removeFromArr(cardArr, this);
-        player.pickupDistance -= (this.lv * this.step);
+        player.pickupDistance = wizard.pickupDistance;
     },
     get() {
         this.lv++;
@@ -790,7 +793,7 @@ const card_magnet = {
             this.levelUp();
         } else {
             player.cards.push(this);
-            player.pickupDistance += this.step;
+            player.pickupDistance += this.base;
             this.weight++;
         }
         for (let item of itemPool.getAliveObjects()) {

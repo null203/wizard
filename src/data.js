@@ -225,6 +225,7 @@ const wizard = {
     maxExp: maxExp[0],
     lv: 1,
     exp: 0,
+    pickupDistance: 50 * kw,
     mat: [
         // left
         0x0000, 0x79f8, 0x4be0, 0x5bf8,
@@ -776,7 +777,7 @@ const boss_alien = {
     hp: 40000,
     atk: 130,
     def: 25,
-    exp: 0,
+    exp: 200000,
     speed: 1.5,
     isBoss: true,
     size: 2,

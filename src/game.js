@@ -607,7 +607,7 @@ const player = Sprite({
     cards: [],
     stop: false,
     point: 0,
-    pickupDistance: 50 * kw,
+    pickupDistance: wizard.pickupDistance,
     lastDx: 1,
     lastDy: 1,
     init() {
@@ -619,6 +619,7 @@ const player = Sprite({
         this.def = wizard.def;
         this.crit = wizard.crit;
         this.maxExp = wizard.maxExp;
+        this.pickupDistance = wizard.pickupDistance;
         this.lv = 1;
         this.exp = 0;
         this.direction = LEFT;
@@ -626,7 +627,6 @@ const player = Sprite({
         this.cards = [];
         this.stop = false;
         this.point = 0;
-        this.pickupDistance = 50 * kw;
     },
     checkPoint() {
         if (this.point <= 0) return;
@@ -658,6 +658,8 @@ const player = Sprite({
             this.maxExp = maxExp[this.lv - 1];
             this.atk += 1;
             this.def += 1;
+            this.maxHp += 1;
+            this.hp += 1;
         }
     },
     addHp(hp) {

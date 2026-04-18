@@ -67,7 +67,7 @@ function drawCloseBtn(x, y, size) {
     context.stroke();
 }
 
-function drawCard(_x, _y, card, selectedCard) {
+function drawCard(x, y, card, selectedCard) {
     const size = pixelSize * 2;
     let color = 'white';
     if (selectedCard) {
@@ -77,27 +77,36 @@ function drawCard(_x, _y, card, selectedCard) {
             color = 'gray';
         }
     }
-    card.x = _x;
-    card.y = _y;
+    card.x = x;
+    card.y = y;
     if (card.lv == 0) {
         context.fillStyle = 'white';
         context.textAlign = 'center';
         let fontSize = Math.floor(15 * kw);
         context.font = `${fontSize}px ${fontFamily}`;
-        context.fillText('NEW', _x + card.width / 2, _y - size);
+        context.fillText('NEW', x + card.width / 2, y - size);
     }
-    for (let y = 0; y < bitmapHeight; y++) {
-        let row = card.icon[y];
-        for (let x = 0; x < bitmapWidth; x++) {
-            let isPixelOn = (row >> (bitmapWidth - 1 - x)) & 1;
+    for (let _y = 0; _y < bitmapHeight; _y++) {
+        let row = card.icon[_y];
+        for (let _x = 0; _x < bitmapWidth; _x++) {
+            let isPixelOn = (row >> (bitmapWidth - 1 - _x)) & 1;
             context.fillStyle = isPixelOn ? color : 'black';
             context.fillRect(
-                _x + x * size,
-                _y + y * size,
+                x + _x * size,
+                y + _y * size,
                 size,
                 size
             );
         }
+    }
+}
+
+function addBtn(btn, btnArr) {
+    const i = btnArr.findIndex(b => b.id === btn.id);
+    if (i === -1) {
+        btnArr.push(btn);
+    } else if (btnArr[i].x !== btn.x || btnArr[i].y !== btn.y) {
+        Object.assign(btnArr[i], btn);
     }
 }
 
@@ -110,11 +119,6 @@ const mainDialog = Sprite({
     msgArr: [],
     btnArr: [],
     selectedCard: null,
-    addBtn(btn) {
-        if (!this.btnArr.find(b => b.id === btn.id)) {
-            this.btnArr.push(btn);
-        }
-    },
     open() {
         this.show = true;
         this.btnArr = [];
@@ -125,7 +129,7 @@ const mainDialog = Sprite({
         this.show = false;
     },
     onUp() {
-        let pointer = getPointer()
+        let pointer = getPointer();
         for (let btn of this.btnArr) {
             if (isClickRect(pointer, btn)) {
                 btn.onPressed();
@@ -175,7 +179,7 @@ const mainDialog = Sprite({
         context.textAlign = 'center';
         for (let card of player.cards) {
             x = left + objSize * 3 * colNum;
-            y = top + (objSize * 3 * rowNum);
+            y = top + objSize * 3 * rowNum;
             drawCard(x, y, card);
             context.fillText(card.name, x + objSize, y + objSize * 2.5);
             if (colNum < 2) {
@@ -184,7 +188,7 @@ const mainDialog = Sprite({
                 colNum = 0;
                 rowNum++;
             }
-            this.addBtn({
+            addBtn({
                 id: card.name,
                 x: x,
                 y: y,
@@ -194,14 +198,14 @@ const mainDialog = Sprite({
                     mainDialog.selectedCard = card;
                     openSubDialog(mainDialog, cardDetailDialog);
                 }
-            });
+            }, this.btnArr);
         }
     },
     drawCloseBtn() {
         let startX = screenWidth - objSize - pixelSize * 10;
         let startY = objSize / 2 + pixelSize * 2;
         let size = objSize;
-        this.addBtn({
+        addBtn({
             id: 'close',
             x: startX,
             y: startY,
@@ -210,7 +214,7 @@ const mainDialog = Sprite({
             onPressed() {
                 closeDialog(mainDialog);
             }
-        });
+        }, this.btnArr);
         drawCloseBtn(startX, startY, size);
     }
 });
@@ -387,6 +391,7 @@ const startDialog = Sprite({
     close() {
         this.show = false;
         initGame();
+        playAudio('/audio/click_button');
         if (this.tutorial) {
             openDialog(tutorialDialog);
             this.tutorial = false;
@@ -454,6 +459,7 @@ const gameOverDialog = Sprite({
             levelUpDialog.resetCount = 3;
             closeDialog(this);
             openDialog(startDialog);
+            playAudio('/audio/click_button');
         }
     },
     render() {
@@ -472,12 +478,11 @@ const gameOverDialog = Sprite({
         context.lineWidth = 1;
         context.textAlign = 'left';
         x = Math.floor(screenWidth / 2 - objSize * 4);
-        y += objSize / 5;
         for (let line of this.getText()) {
             y += objSize;
             context.fillText(line, x, y);
         }
-        y += objSize;
+        y += objSize / 2;
         this.drawCards(x, y);
         x = (screenWidth - objSize * 5) / 2;
         y += objSize * 9.5;
@@ -564,11 +569,6 @@ const cardDialog = Sprite({
         '要获得新卡片，请选择一张卡片舍弃'
     ],
     btnArr: [],
-    addBtn(btn) {
-        if (!this.btnArr.find(b => b.id === btn.id)) {
-            this.btnArr.push(btn);
-        }
-    },
     onUp() {
         let pointer = getPointer();
         for (let btn of this.btnArr) {
@@ -638,7 +638,7 @@ const cardDialog = Sprite({
                 colNum = 0;
                 rowNum++;
             }
-            this.addBtn({
+            addBtn({
                 id: card.name,
                 x: x,
                 y: y,
@@ -647,7 +647,7 @@ const cardDialog = Sprite({
                 onPressed() {
                     cardDialog.selectedCard = card;
                 }
-            });
+            }, this.btnArr);
         }
     },
     drawOkBtn(x, y, width, height) {
@@ -658,7 +658,7 @@ const cardDialog = Sprite({
         context.textAlign = 'center';
         context.font = `${Math.floor(16 * kw)}px ${fontFamily}`;
         context.fillText('确定', screenWidth / 2, y + height * 0.7);
-        this.addBtn({
+        addBtn({
             id: 'ok',
             x: x,
             y: y,
@@ -672,13 +672,13 @@ const cardDialog = Sprite({
                 closeSubDialog(cardDialog.parent, cardDialog);
                 closeDialog(cardDialog.parent);
             }
-        });
+        }, this.btnArr);
     },
     drawCloseBtn() {
         let startX = screenWidth - objSize - pixelSize * 10;
         let startY = objSize / 2 + pixelSize * 2;
         let size = objSize;
-        this.addBtn({
+        addBtn({
             id: 'close',
             x: startX,
             y: startY,
@@ -687,7 +687,7 @@ const cardDialog = Sprite({
             onPressed() {
                 closeSubDialog(cardDialog.parent, cardDialog);
             }
-        });
+        }, this.btnArr);
         drawCloseBtn(startX, startY, size);
     }
 });
@@ -700,11 +700,6 @@ const cardDetailDialog = Sprite({
     show: false,
     parent: null,
     btnArr: [],
-    addBtn(btn) {
-        if (!this.btnArr.find(b => b.id === btn.id)) {
-            this.btnArr.push(btn);
-        }
-    },
     onUp() {
         let pointer = getPointer();
         for (let btn of this.btnArr) {
@@ -742,7 +737,7 @@ const cardDetailDialog = Sprite({
         let startX = screenWidth - objSize - pixelSize * 10;
         let startY = objSize / 2 + pixelSize * 2;
         let size = objSize;
-        this.addBtn({
+        addBtn({
             id: 'close',
             x: startX,
             y: startY,
@@ -751,7 +746,7 @@ const cardDetailDialog = Sprite({
             onPressed() {
                 closeSubDialog(cardDetailDialog.parent, cardDetailDialog);
             }
-        });
+        }, this.btnArr);
         drawCloseBtn(startX, startY, size);
     }
 });

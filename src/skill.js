@@ -318,7 +318,7 @@ const blizzard = Sprite({
     anchor: { x: 0.5, y: 1 },
     ratio: 0,
     cd: 5,
-    distance: objSize * 6,
+    distance: objSize * 4,
     active: false,
     timeCount: 0,
     maxTime: 10,
