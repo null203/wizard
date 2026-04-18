@@ -405,7 +405,7 @@ const skill_blizzard = {
 
 const slime = {
     hp: 50,
-    atk: 15,
+    atk: 20,
     def: 2,
     exp: 150,
     audioPath: '/audio/attack_slime',
@@ -435,7 +435,7 @@ const slime = {
 
 const skeleton = {
     hp: 80,
-    atk: 20,
+    atk: 25,
     def: 2,
     exp: 180,
     audioPath: '/audio/attack_sword',
@@ -465,7 +465,7 @@ const skeleton = {
 
 const boss_skeleton = {
     hp: 4000,
-    atk: 50,
+    atk: 55,
     def: 5,
     exp: 7000,
     speed: 1.5,
@@ -498,7 +498,7 @@ const boss_skeleton = {
 
 const spider = {
     hp: 180,
-    atk: 30,
+    atk: 38,
     def: 5,
     exp: 900,
     audioPath: '/audio/attack_spider',
@@ -528,7 +528,7 @@ const spider = {
 
 const snake = {
     hp: 200,
-    atk: 35,
+    atk: 43,
     def: 5,
     exp: 1000,
     audioPath: '/audio/attack_bite',
@@ -558,7 +558,7 @@ const snake = {
 
 const boss_crab = {
     hp: 10000,
-    atk: 70,
+    atk: 80,
     def: 15,
     exp: 50000,
     speed: 1.5,
@@ -591,7 +591,7 @@ const boss_crab = {
 
 const mummy = {
     hp: 300,
-    atk: 40,
+    atk: 48,
     def: 5,
     exp: 2600,
     audioPath: '/audio/attack_blunt',
@@ -621,7 +621,7 @@ const mummy = {
 
 const orc = {
     hp: 300,
-    atk: 45,
+    atk: 53,
     def: 8,
     exp: 3000,
     audioPath: '/audio/attack_blunt',
@@ -651,7 +651,7 @@ const orc = {
 
 const boss_tauren = {
     hp: 20000,
-    atk: 90,
+    atk: 100,
     def: 18,
     exp: 150000,
     speed: 1.5,
@@ -684,7 +684,7 @@ const boss_tauren = {
 
 const fox = {
     hp: 320,
-    atk: 50,
+    atk: 58,
     def: 10,
     exp: 5200,
     audioPath: '/audio/attack_scythe',
@@ -714,7 +714,7 @@ const fox = {
 
 const devil = {
     hp: 350,
-    atk: 55,
+    atk: 73,
     def: 12,
     exp: 5500,
     audioPath: '/audio/attack_fork',
@@ -744,7 +744,7 @@ const devil = {
 
 const reaper = {
     hp: 400,
-    atk: 60,
+    atk: 78,
     def: 15,
     exp: 8500,
     audioPath: '/audio/attack_scythe',
@@ -773,8 +773,8 @@ const reaper = {
 };
 
 const boss_alien = {
-    hp: 30000,
-    atk: 120,
+    hp: 40000,
+    atk: 130,
     def: 25,
     exp: 0,
     speed: 1.5,

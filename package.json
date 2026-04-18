@@ -7,6 +7,6 @@
     "terser": "^5.46.1"
   },
   "scripts": {
-    "build": "babel src -d dist && cd dist && terser kontra.min.js data.js util.js noise.js skill.js card.js dialog.js joystick.js game.js -o ../app.min.js --compress --mangle --comments false"
+    "build": "babel src -d dist && cd dist && terser kontra.min.js data.js util.js noise.js skill.js card.js dialog.js joystick.js game.js -o ../app.min.js --compress passes=3,drop_console=true,drop_debugger=true,booleans=true,unused=true --mangle toplevel --format comments=false"
   }
 }
