@@ -593,7 +593,7 @@ const boss_crab = {
 };
 
 const mummy = {
-    hp: 300,
+    hp: 280,
     atk: 53,
     def: 5,
     exp: 2600,
@@ -686,7 +686,7 @@ const boss_tauren = {
 };
 
 const fox = {
-    hp: 320,
+    hp: 300,
     atk: 72,
     def: 10,
     exp: 5200,
@@ -716,7 +716,7 @@ const fox = {
 };
 
 const devil = {
-    hp: 350,
+    hp: 330,
     atk: 78,
     def: 12,
     exp: 5500,
@@ -746,7 +746,7 @@ const devil = {
 };
 
 const reaper = {
-    hp: 400,
+    hp: 380,
     atk: 83,
     def: 15,
     exp: 8500,
@@ -778,7 +778,7 @@ const reaper = {
 const boss_alien = {
     hp: 60000,
     atk: 130,
-    def: 25,
+    def: 30,
     exp: 200000,
     speed: 1.5,
     isBoss: true,

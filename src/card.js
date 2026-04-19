@@ -400,8 +400,8 @@ const card_belt = {
     name: '力量腰带',
     width: objSize * 2,
     height: objSize * 2,
-    atk: 5,
-    step: 5,
+    atk: 10,
+    step: 3,
     weight: 1,
     getDetail() {
         return [
@@ -584,7 +584,7 @@ const card_tooth = {
         return [
             `装备: ${this.name}`,
             `等级: ${this.lv} / ${this.maxLv}`,
-            `攻击力 + ${(this.lv - 1) * this.step + 5}`,
+            `攻击力 + ${(this.lv - 1) * this.step + 3}`,
             `暴击率 + ${(this.lv - 1) * this.step + 5}`,
         ];
     },
@@ -592,13 +592,13 @@ const card_tooth = {
         return [
             `装备: ${this.name}`,
             `等级: ${this.lv + 1} / ${this.maxLv}`,
-            `攻击力 + ${this.lv * this.step + 5}`,
+            `攻击力 + ${this.lv * this.step + 3}`,
             `暴击率 + ${this.lv * this.step + 5}`,
         ];
     },
     remove() {
         removeFromArr(cardArr, this);
-        player.atk -= (5 + (this.lv - 1) * this.step);
+        player.atk -= (3 + (this.lv - 1) * this.step);
         player.crit -= (5 + (this.lv - 1) * this.step);
     },
     get() {
@@ -672,6 +672,7 @@ const card_necklace = {
             player.atk += 2;
             player.def += 2;
             player.maxHp += 10;
+            player.hp += 10;
             this.weight++;
         }
     },
@@ -679,6 +680,7 @@ const card_necklace = {
         player.atk += this.step;
         player.def += this.step;
         player.maxHp += this.hp;
+        player.hp += this.hp;
         if (this.lv == this.maxLv) {
             removeFromArr(cardArr, this);
         }
@@ -701,6 +703,7 @@ const card_axe = {
     width: objSize * 2,
     height: objSize * 2,
     step: 40,
+    atk: 12,
     weight: 1,
     getDetail() {
         return [
@@ -709,7 +712,7 @@ const card_axe = {
             `伤害倍率: ${axe.ratio}%`,
             `攻击距离: ${Math.round(axe.distance / kw)}`,
             `冷却时间: ${axe.cd}秒`,
-            `攻击力 + 15`,
+            `攻击力 + ${this.atk}`,
             `向附近的敌人投掷回旋飞斧。`,
         ];
     },
@@ -720,14 +723,14 @@ const card_axe = {
             `伤害倍率: ${axe.ratio + (this.lv == 0 ? 0 : this.step)}%`,
             `攻击距离: ${Math.round(axe.distance / kw)}`,
             `冷却时间: ${axe.cd}秒`,
-            `攻击力 + 15`,
+            `攻击力 + ${this.atk}`,
             `向附近的敌人投掷回旋飞斧。`,
         ];
     },
     remove() {
         removeFromArr(cardArr, this);
         removeFromArr(player.skill, axe);
-        player.atk -= 15;
+        player.atk -= this.atk;
     },
     get() {
         this.lv++;
@@ -736,7 +739,7 @@ const card_axe = {
         } else {
             player.skill.push(axe);
             player.cards.push(this);
-            player.atk += 15;
+            player.atk += this.atk;
             this.weight++;
         }
     },
@@ -857,7 +860,7 @@ const card_lance = {
         } else {
             player.skill.push(lance);
             player.cards.push(this);
-            player.atk += 15;
+            player.atk += 10;
             this.weight++;
         }
     },
