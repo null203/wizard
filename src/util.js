@@ -77,15 +77,16 @@ function isVisible(obj) {
 
 function weightedRandom(weights) {
     const entries = Object.entries(weights);
-    const totalWeight = entries.reduce((sum, [, weight]) => sum + weight, 0);
-    const random = Math.random() * totalWeight;
-    let accumulatedWeight = 0;
-    for (const [number, weight] of entries) {
-        accumulatedWeight += weight;
-        if (random < accumulatedWeight) {
-            return Number(number);
+    const totalWeight = entries.reduce((sum, [, w]) => sum + w, 0);
+    let r = Math.random() * totalWeight;
+    let acc = 0;
+    for (const [key, w] of entries) {
+        acc += w;
+        if (r < acc) {
+            return +key;
         }
     }
+    return +entries[entries.length - 1][0];
 }
 
 function setDirection(sprite, offsetX, offsetY) {

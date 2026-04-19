@@ -326,7 +326,7 @@ function createEnemy(data) {
             for (let other of quadtree.get(this)) {
                 if (other === this) continue;
                 if (other.type !== 'enemy') continue;
-                if (!other.isAlive()) continue;
+                if (other.isDead) continue;
                 let ux = this.x - other.x;
                 let uy = this.y - other.y;
                 let dist2 = ux * ux + uy * uy;
@@ -658,8 +658,8 @@ const player = Sprite({
             this.maxExp = maxExp[this.lv - 1];
             this.atk += 1;
             this.def += 1;
-            this.maxHp += 1;
-            this.hp += 1;
+            this.maxHp += 2;
+            this.hp += 2;
         }
     },
     addHp(hp) {

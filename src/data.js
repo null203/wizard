@@ -52,6 +52,7 @@ const cardLimit = 9;
 
 const worldLimit = 5000 * kw;
 const expRatio = 1.5;
+const minTorch = 35;
 
 const backgroundArr = [];
 const skillArr = [];
@@ -466,13 +467,13 @@ const skeleton = {
 
 const boss_skeleton = {
     hp: 4000,
-    atk: 55,
+    atk: 52,
     def: 5,
     exp: 7000,
     speed: 1.5,
     isBoss: true,
     size: 2,
-    audioPath: '/audio/attack_sword',
+    audioPath: '/audio/attack_big_sword',
     mat: [
         // left
         0x2000, 0x67c0, 0x6fe0, 0x6fe0,
@@ -685,7 +686,7 @@ const boss_tauren = {
 
 const fox = {
     hp: 320,
-    atk: 75,
+    atk: 72,
     def: 10,
     exp: 5200,
     audioPath: '/audio/attack_scythe',
@@ -715,7 +716,7 @@ const fox = {
 
 const devil = {
     hp: 350,
-    atk: 80,
+    atk: 78,
     def: 12,
     exp: 5500,
     audioPath: '/audio/attack_fork',
@@ -745,7 +746,7 @@ const devil = {
 
 const reaper = {
     hp: 400,
-    atk: 78,
+    atk: 83,
     def: 15,
     exp: 8500,
     audioPath: '/audio/attack_scythe',
@@ -774,7 +775,7 @@ const reaper = {
 };
 
 const boss_alien = {
-    hp: 40000,
+    hp: 50000,
     atk: 130,
     def: 25,
     exp: 200000,
