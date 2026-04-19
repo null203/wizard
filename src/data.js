@@ -102,6 +102,7 @@ let flowLastPlayerY = 0;
 let lastMoveTime = 0;
 let audioUnlocked = false;
 let audioBuffers = {};
+let maxEnemySize = 6;
 
 const enemyPool = Pool({
     maxSize: 50,
@@ -500,7 +501,7 @@ const boss_skeleton = {
 
 const spider = {
     hp: 180,
-    atk: 38,
+    atk: 35,
     def: 5,
     exp: 900,
     audioPath: '/audio/attack_spider',
@@ -530,7 +531,7 @@ const spider = {
 
 const snake = {
     hp: 200,
-    atk: 45,
+    atk: 42,
     def: 5,
     exp: 1000,
     audioPath: '/audio/attack_bite',
@@ -775,7 +776,7 @@ const reaper = {
 };
 
 const boss_alien = {
-    hp: 50000,
+    hp: 60000,
     atk: 130,
     def: 25,
     exp: 200000,

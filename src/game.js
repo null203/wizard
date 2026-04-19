@@ -830,25 +830,25 @@ function wave(...args) {
 }
 
 function respawnEnemy() {
-    for (let enemy of enemyPool.getAliveObjects()) {
-        if (!isVisible(enemy) && enemy.type != 'boss') {
-            let distance = (enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2;
-            if (distance > screenHeight * screenHeight * 0.64) {
-                enemy.ttl = 0;
-                enemy.update();
+    if (enemyPool.getAliveObjects().length >= maxEnemySize) {
+        for (let enemy of enemyPool.getAliveObjects()) {
+            if (!isVisible(enemy) && enemy.type != 'boss') {
+                let distance = (enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2;
+                if (distance > screenHeight * screenHeight * 0.64) {
+                    enemy.ttl = 0;
+                    enemy.update();
+                }
             }
         }
+        respawnTime = 0;
     }
-    respawnTime = 0;
 }
 
 function intervalHandle() {
-    if (statusBar.m < 15) {
-        if (respawnTime >= 5 && enemyPool.getAliveObjects().length == enemyPool.maxSize) {
-            respawnEnemy();
-        } else {
-            respawnTime++;
-        }
+    if (respawnTime >= 5) {
+        respawnEnemy();
+    } else {
+        respawnTime++;
     }
     player.checkPoint();
     statusBar.update();
@@ -866,7 +866,7 @@ function intervalHandle() {
     }
 
     if (player.lv < 5) {
-        if (enemyPool.getAliveObjects().length < 6) {
+        if (enemyPool.getAliveObjects().length < maxEnemySize) {
             wave(slime, skeleton);
         } else {
             respawnEnemy();
@@ -877,6 +877,7 @@ function intervalHandle() {
     if (enemyWareStartTime >= 3) {
         showMsg(player.x - objSize / 3, player.y, '他们来了...', 800);
         enemyWareStartTime = -1;
+        maxEnemySize = enemyPool.maxSzie;
     }
     if (enemyWareStartTime > -1) {
         enemyWareStartTime++;
@@ -911,6 +912,8 @@ function intervalHandle() {
     }
     else if (enemyPool.getAliveObjects().length == 0) {
         openDialog(gameOverDialog);
+    } else {
+        maxEnemySize = enemyPool.getAliveObjects().length;
     }
 }
 
