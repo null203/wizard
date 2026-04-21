@@ -231,11 +231,9 @@ function createEnemy(data) {
                 showMsg(player.x, player.y, '格挡');
                 return;
             }
-            damage = Math.floor(this.atk - player.def);
-            if (damage < 1) {
-                damage = 1;
-            }
-            player.hp = player.hp - (damage > 0 ? damage : 1);
+            damage = Math.floor(this.atk * (50 / (50 + player.def))); 
+            damage = Math.max(1, damage);
+            player.hp = player.hp - damage;
             if (player.hp < 0) {
                 player.hp = 0;
             }
@@ -244,9 +242,7 @@ function createEnemy(data) {
             scoreboard.receivedDamage += damage;
         },
         underAttack(damage) {
-            if (damage < 1) {
-                damage = 1;
-            }
+            damage = Math.max(1, damage);
             this.hp = this.hp - damage;
             return damage;
         },
@@ -261,7 +257,11 @@ function createEnemy(data) {
                 return;
             }
             if (this.hp <= 0 && !this.isDead) {
-                createItem(this.x, this.y, this.exp, exp_ball);
+                if (this.type == 'boss' && data != boss_alien) {
+                    createItem(this.x, this.y, 0, chest);
+                } else {
+                    createItem(this.x, this.y, this.exp, exp_ball);
+                }
                 this.ttl = 60;
                 this.isDead = true;
                 scoreboard.kill++;
@@ -394,6 +394,8 @@ function createItem(x, y, v, obj) {
                 player.addExp(v);
             } else if (obj == heart) {
                 player.addHp(v);
+            } else if (obj == chest) {
+                console.log('chest');
             }
         },
         update() {
@@ -597,6 +599,7 @@ const player = Sprite({
     def: wizard.def,
     crit: wizard.crit,
     maxExp: wizard.maxExp,
+    hpRegen: wizard.hpRegen,
     lv: 1,
     exp: 0,
     anchor: { x: 0.5, y: 0.5 },
@@ -619,6 +622,7 @@ const player = Sprite({
         this.def = wizard.def;
         this.crit = wizard.crit;
         this.maxExp = wizard.maxExp;
+        this.hpRegen = wizard.hpRegen;
         this.pickupDistance = wizard.pickupDistance;
         this.lv = 1;
         this.exp = 0;
@@ -852,6 +856,13 @@ function intervalHandle() {
     }
     player.checkPoint();
     statusBar.update();
+
+    if (hpRegenTime < player.hpRegen) {
+        hpRegenTime++;
+    } else if (player.hp < player.maxHp) {
+        player.hp += 1;
+        hpRegenTime = 1;
+    }
 
     if (player.hp < player.maxHp / 2) {
         lowHpTime++;

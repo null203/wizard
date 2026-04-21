@@ -39,7 +39,7 @@ const CARD_TYPE_MAGIC = 1;
 const CARD_TYPE_WEAPON = 2;
 const CARD_TYPE_EQUIPMENT = 3;
 const CARD_TYPE_ITEM = 4;
-const CARD_TYPE_SUPER_WEAPON = 5;
+const CARD_TYPE_SUPER = 5;
 
 const pixelSize = 2 * kw;
 const joystickOuterRadius = 60;
@@ -57,6 +57,7 @@ const minTorch = 35;
 const backgroundArr = [];
 const skillArr = [];
 const cardArr = [];
+const superCardArr = [];
 const dialogArr = [];
 
 const gridSize = objSize;
@@ -162,6 +163,7 @@ let paused = true;
 let intervalId = null;
 let lowHpTime = 0;
 let respawnTime = 0;
+let hpRegenTime = 1;
 let enemyWareStartTime = 0;
 
 const maxExp = [
@@ -222,12 +224,13 @@ const wizard = {
     y: Math.round((worldLimit - objSize) / 2),
     maxHp: 100,
     atk: 60,
-    def: 5,
+    def: 10,
     crit: 10,
     maxExp: maxExp[0],
     lv: 1,
     exp: 0,
     pickupDistance: 50 * kw,
+    hpRegen: 5,
     mat: [
         // left
         0x0000, 0x79f8, 0x4be0, 0x5bf8,

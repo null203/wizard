@@ -145,6 +145,7 @@ const mainDialog = Sprite({
             `攻击力: ${player.atk}`,
             `防御力: ${player.def}`,
             `暴击率: ${player.crit}%`,
+            `生命恢复: 每${player.hpRegen}秒恢复1点`,
             `DPS: ${getDPS()}`,
         ]
     },

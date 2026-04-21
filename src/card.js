@@ -1,7 +1,7 @@
-function getCards() {
+function getCards(cards = cardArr) {
     let pool = [];
-    for (let i = 0; i < cardArr.length; i++) {
-        pool[i] = cardArr[i];
+    for (let i = 0; i < cards.length; i++) {
+        pool[i] = cards[i];
     }
     let arr = [];
     let len = Math.min(pool.length, 3);
@@ -214,7 +214,7 @@ const card_lightsaber = {
     x: 0,
     y: 0,
     lv: 0,
-    type: CARD_TYPE_SUPER_WEAPON,
+    type: CARD_TYPE_SUPER,
     maxLv: 5,
     name: '圣剑',
     width: objSize * 2,
@@ -939,6 +939,67 @@ const card_blizzard = {
     ]
 };
 
+const card_magic_cloak = {
+    x: 0,
+    y: 0,
+    lv: 0,
+    type: CARD_TYPE_SUPER,
+    maxLv: 3,
+    name: '魔法斗篷',
+    width: objSize * 2,
+    height: objSize * 2,
+    def: 5,
+    step: 5,
+    weight: 1,
+    getDetail() {
+        return [
+            `装备: ${this.name}`,
+            `等级: ${this.lv} / ${this.maxLv}`,
+            `防御力 + ${this.def}`,
+            `生命恢复速度加快 ${this.lv * this.step}秒`,
+        ];
+    },
+    getDescription() {
+        return [
+            `武器: ${this.name}`,
+            `等级: ${this.lv + 1} / ${this.maxLv}`,
+            `防御力 + ${this.def}`,
+            `生命恢复速度加快 ${(this.lv + 1) * this.step}秒`,
+        ];
+    },
+    remove() {
+        removeFromArr(cardArr, this);
+        removeFromArr(player.skill, blizzard);
+    },
+    get() {
+        this.lv++;
+        if (isExists(player.cards, this)) {
+            this.levelUp();
+        } else {
+            player.def += this.def;
+            player.hpRegen += this.step;
+            this.weight++;
+        }
+    },
+    levelUp() {
+        player.hpRegen += this.step;
+        if (this.lv == this.maxLv) {
+            removeFromArr(cardArr, this);
+        }
+    },
+    icon: [
+        // 0xffff, 0x8001, 0x9fe1, 0x87f1,
+        // 0xbffd, 0x8001, 0x8791, 0x8f09,
+        // 0x9f09, 0x9f09, 0x9f09, 0x9f09,
+        // 0x9f09, 0xb70d, 0x8001, 0xffff,
+
+        0xffff, 0x85a1, 0x8e51, 0x9c09,
+        0xb805, 0xb805, 0x9809, 0x8791,
+        0x8f09, 0x9f09, 0x9f09, 0x9f09,
+        0x9f09, 0xb70d, 0x8001, 0xffff,
+    ]
+};
+
 // 3级以后放入卡池
 function putItemCard() {
     let arr = [];
@@ -949,14 +1010,9 @@ function putItemCard() {
     arr.push(card_necklace);
     arr.push(card_tooth);
     arr.push(card_magnet);
-    arr.push(card_lightsaber);
     for (let card of arr) {
         card.lv = 0;
-        if (card.type == CARD_TYPE_SUPER_WEAPON) {
-            card.weight = 0.1;
-        } else {
-            card.weight = 1;
-        }
+        card.weight = 1;
         cardArr.push(card);
     }
 }
@@ -979,5 +1035,8 @@ function initCard() {
             card.weight = 1;
         }
     }
+    clearArr(superCardArr);
+    superCardArr.push(card_lightsaber);
+    superCardArr.push(card_magic_cloak);
 }
 initCard();
