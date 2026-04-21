@@ -433,7 +433,6 @@ const gameOverDialog = Sprite({
             `DPS: ${getDPS()}`,
             `击杀敌人: ${scoreboard.kill}`,
             `击杀BOSS: ${scoreboard.bossKill} / ${bossCount}`,
-            `总伤害: ${scoreboard.damage}`,
             `受到伤害: ${scoreboard.receivedDamage}`,
             `破坏: ${scoreboard.break}`,
         ];

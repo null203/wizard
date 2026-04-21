@@ -170,7 +170,7 @@ function createBackground() {
                             ratio = 5;
                         }
                         if (ratio > randInt(1, 100)) {
-                            createItem(this.x, this.y, 100, heart);
+                            createItem(this.x, this.y, 150, heart);
                         }
                         scoreboard.break++;
                     }
@@ -231,7 +231,7 @@ function createEnemy(data) {
                 showMsg(player.x, player.y, '格挡');
                 return;
             }
-            damage = Math.floor(this.atk * (50 / (50 + player.def))); 
+            damage = Math.floor(this.atk * (50 / (50 + player.def)));
             damage = Math.max(1, damage);
             player.hp = player.hp - damage;
             if (player.hp < 0) {
@@ -257,8 +257,11 @@ function createEnemy(data) {
                 return;
             }
             if (this.hp <= 0 && !this.isDead) {
-                if (this.type == 'boss' && data != boss_alien) {
-                    createItem(this.x, this.y, 0, chest);
+                if (this.type == 'boss') {
+                    if (data != boss_alien) {
+                        createItem(this.x, this.y, 0, chest);
+                    }
+                    player.addExp(this.exp);
                 } else {
                     createItem(this.x, this.y, this.exp, exp_ball);
                 }
@@ -662,8 +665,8 @@ const player = Sprite({
             this.maxExp = maxExp[this.lv - 1];
             this.atk += 1;
             this.def += 1;
-            this.maxHp += 2;
-            this.hp += 2;
+            this.maxHp += 5;
+            this.hp += 5;
         }
     },
     addHp(hp) {
