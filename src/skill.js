@@ -194,7 +194,7 @@ const fireball = Sprite({
             x: 0,
             y: 0,
             anchor: { x: 0.5, y: 0.5 },
-            radius: (Math.random() * (fireball.width / 2 - 2) + 2) * kw,
+            radius: (Math.random() * (fireball.width / 2 - 2) + 2),
             color: `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.5})`,
             ttl: 60,
             update() {
