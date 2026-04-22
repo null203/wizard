@@ -842,8 +842,9 @@ function respawnEnemy() {
             if (!isVisible(enemy) && enemy.type != 'boss') {
                 let distance = (enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2;
                 if (distance > screenHeight * screenHeight * 0.64) {
-                    enemy.ttl = 0;
-                    enemy.update();
+                    let angle = Math.random() * 2 * Math.PI;
+                    enemy.x = Math.round(player.x + screenHeight * 0.8 * Math.cos(angle));
+                    enemy.y = Math.round(player.y + screenHeight * 0.8 * Math.sin(angle));
                 }
             }
         }

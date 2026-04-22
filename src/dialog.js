@@ -268,6 +268,7 @@ const levelUpDialog = Sprite({
             if (isClickRect(pointer, this.closeBtn)) {
                 player.point--;
                 closeDialog(this);
+                playAudio('/audio/click_button');
                 return;
             }
             if (this.resetCount > 0 && isClickRect(pointer, this.resetBtn)) {
