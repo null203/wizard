@@ -447,17 +447,6 @@ const gameOverDialog = Sprite({
     onUp() {
         let pointer = getPointer();
         if (isClickRect(pointer, this.okBtn)) {
-            player.init();
-            statusBar.init();
-            scoreboard.init();
-            initCard();
-            initSkill();
-            clearArr(backgroundArr);
-            enemyPool.clear();
-            itemPool.clear();
-            msgPool.clear();
-            quadtree.clear();
-            levelUpDialog.resetCount = 3;
             closeDialog(this);
             openDialog(startDialog);
             playAudio('/audio/click_button');

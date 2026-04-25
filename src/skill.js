@@ -325,7 +325,6 @@ const blizzard = Sprite({
     attackCount: 0,
     frameCount: 0,
     direction: 1,
-    step: 0.05,
     targetArr: [],
     init() {
         this.ratio = 20;
@@ -389,6 +388,84 @@ const blizzard = Sprite({
     }
 });
 
+const fire = Sprite({
+    x: 0,
+    y: 0,
+    type: 'skill',
+    ratio: 0,
+    radius: objSize * 3,
+    frameCount: 0,
+    direction: 1,
+    targetArr: [],
+    particles: Pool({
+        maxSize: 10,
+        create: Sprite
+    }),
+    init() {
+        this.ratio = 40;
+        this.active = false;
+    },
+    update(dt) {
+        this.particles.update();
+        if (this.frameCount >= 60) {
+            this.frameCount = 0;
+            const radius2 = this.radius * this.radius;
+            for (let enemy of enemyPool.getAliveObjects()) {
+                if (!isExists(this.targetArr, enemy) && enemy.hp > 0) {
+                    let deltaX = enemy.x - player.x;
+                    let deltaY = enemy.y - player.y;
+                    let dist2 = deltaX * deltaX + deltaY * deltaY;
+                    if (dist2 < radius2) {
+                        this.createParticles(enemy);
+                        this.targetArr.push(enemy);
+                    }
+                }
+            }
+        }
+        this.frameCount++;
+    },
+    render() {
+        this.particles.render();
+    },
+    createParticles(enemy) {
+        this.particles.get({
+            x: enemy.x,
+            y: enemy.y,
+            width: enemy.width * 2,
+            height: enemy.height * 2,
+            anchor: { x: 0.5, y: 0.5 },
+            ttl: 180,
+            direction: 1,
+            frameCount: 0,
+            update() {
+                if (enemy.hp <= 0) {
+                    this.ttl = 0;
+                    removeFromArr(fire.targetArr, enemy);
+                    return;
+                }
+                this.x = enemy.x;
+                this.y = enemy.y;
+                if (this.frameCount % 30 == 0) {
+                    this.direction = this.direction % 4 + 1;
+                }
+                if (this.frameCount % 90 == 0) {
+                    player.attack(enemy, fire.ratio);
+                }
+                this.frameCount++;
+                this.ttl--;
+                if (this.ttl == 0) {
+                    removeFromArr(fire.targetArr, enemy);
+                }
+            },
+            render() {
+                if (this.ttl > 0) {
+                    drawBitmap(this.direction, skill_fire, enemy.size, 32, 32);
+                }
+            }
+        });
+    }
+});
+
 const lightsaber = kontra.Sprite({
     x: screenWidth / 2,
     y: screenHeight / 2 - objSize * 3,
@@ -415,7 +492,7 @@ const lightsaber = kontra.Sprite({
     }),
     targetArr: [],
     init() {
-        this.ratio = 300;
+        this.ratio = 350;
         this.timeCount = 0;
         this.active = false;
         this.angle = Math.PI;
@@ -563,7 +640,7 @@ const poisonsmoke = Sprite({
     fly: false,
     active: false,
     particles: Pool({
-        maxSize: 60,
+        maxSize: 20,
         create: Sprite
     }),
     speed: 3 * kw,
@@ -651,7 +728,7 @@ const poisonsmoke = Sprite({
             context.restore();
         }
         if (this.active) {
-            this.particles.get(this.createParticles());
+            this.createParticles();
             this.particles.render();
         }
     },
@@ -880,10 +957,10 @@ skillArr.push(lightsaber);
 skillArr.push(poisonsmoke);
 skillArr.push(axe);
 skillArr.push(lance);
+skillArr.push(fire);
 
 function initSkill() {
     for (let skill of skillArr) {
         skill.init();
     }
 }
-initSkill();

@@ -223,6 +223,7 @@ function createEnemy(data) {
         ttl: Infinity,
         isDead: false,
         isSlow: false,
+        size: data.size,
         attack() {
             let damage = 0;
             if (isExists(player.cards, card_small_shield)
@@ -262,15 +263,14 @@ function createEnemy(data) {
                         createItem(this.x, this.y, 0, chest);
                     }
                     player.addExp(this.exp);
+                    scoreboard.bossKill++;
+                    levelUpDialog.resetCount = 3;
                 } else {
                     createItem(this.x, this.y, this.exp, exp_ball);
                 }
                 this.ttl = 60;
                 this.isDead = true;
                 scoreboard.kill++;
-                if (this.type == 'boss') {
-                    scoreboard.bossKill++;
-                }
                 return;
             }
             this.timeCount += dt;
@@ -970,6 +970,17 @@ function initGame() {
             bossObj[boss] = null;
         }
     }
+    player.init();
+    statusBar.init();
+    scoreboard.init();
+    initCard();
+    initSkill();
+    clearArr(backgroundArr);
+    enemyPool.clear();
+    itemPool.clear();
+    msgPool.clear();
+    quadtree.clear();
+    levelUpDialog.resetCount = 3;
     createBackground();
     initFlowField();
     updateFlowField();
@@ -989,6 +1000,7 @@ function initGame() {
     // card_lance.get();
     // card_small_shield.get();
     // card_blizzard.get();
+    // card_fire_cloak.get();
 }
 
 loadDialog.numAssets = audioUrls.length + 1;

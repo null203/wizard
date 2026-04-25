@@ -13,8 +13,8 @@ function preprocessBitmap(data, bitW) {
     return result;
 }
 
-function createBitmapCanvas(direction, data, size, bitW, bitH) {
-    const parsedData = preprocessBitmap(data, bitW);
+function createBitmapCanvas(direction, obj, size, bitW, bitH) {
+    const parsedData = preprocessBitmap(obj.mat, bitW);
     const frameStart = (direction - 1) * bitH;
     const frameEnd = direction * bitH;
     const canvas = document.createElement('canvas');
@@ -45,7 +45,7 @@ function drawBitmap(direction, obj, size = 1, bitW = bitmapWidth, bitH = bitmapH
     if (obj.hasOwnProperty(key)) {
         data = obj[key];
     } else {
-        data = createBitmapCanvas(direction, obj.mat, size, bitW, bitH);
+        data = createBitmapCanvas(direction, obj, size, bitW, bitH);
         obj[key] = data;
     }
     const dx = screenWidth / 2 - player.x;

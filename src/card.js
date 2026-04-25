@@ -215,7 +215,7 @@ const card_lightsaber = {
     y: 0,
     lv: 0,
     type: CARD_TYPE_SUPER,
-    maxLv: 5,
+    maxLv: 3,
     name: '圣剑',
     width: objSize * 2,
     height: objSize * 2,
@@ -223,7 +223,7 @@ const card_lightsaber = {
     weight: 0.1,
     getDetail() {
         return [
-            `武器: ${this.name}`,
+            `神器: ${this.name}`,
             `等级: ${this.lv} / ${this.maxLv}`,
             `伤害倍率: ${lightsaber.ratio}%`,
             `攻击距离: ${parseInt(lightsaber.height)}`,
@@ -939,60 +939,64 @@ const card_blizzard = {
     ]
 };
 
-const card_magic_cloak = {
+const card_fire_cloak = {
     x: 0,
     y: 0,
     lv: 0,
     type: CARD_TYPE_SUPER,
     maxLv: 3,
-    name: '魔法斗篷',
+    name: '火焰斗篷',
     width: objSize * 2,
     height: objSize * 2,
     def: 5,
-    step: 5,
+    step: 20,
     weight: 1,
     getDetail() {
         return [
-            `装备: ${this.name}`,
+            `神器: ${this.name}`,
             `等级: ${this.lv} / ${this.maxLv}`,
+            `伤害倍率: ${fire.ratio}%`,
             `防御力 + ${this.def}`,
-            `生命恢复速度加快 ${this.lv * this.step}秒`,
+            `生命恢复速度加快 ${this.lv} 秒`,
+            `可持续燃烧周围敌人。`,
         ];
     },
     getDescription() {
         return [
             `武器: ${this.name}`,
             `等级: ${this.lv + 1} / ${this.maxLv}`,
+            `伤害倍率: ${fire.ratio}%`,
             `防御力 + ${this.def}`,
-            `生命恢复速度加快 ${(this.lv + 1) * this.step}秒`,
+            `生命恢复速度加快 ${this.lv + 1} 秒`,
+            `可持续燃烧周围敌人。`,
         ];
     },
     remove() {
         removeFromArr(cardArr, this);
         removeFromArr(player.skill, blizzard);
+        player.def -= this.def;
+        player.hpRegen = wizard.hpRegen;
     },
     get() {
         this.lv++;
         if (isExists(player.cards, this)) {
             this.levelUp();
         } else {
+            player.skill.push(fire);
+            player.cards.push(this);
             player.def += this.def;
-            player.hpRegen += this.step;
+            player.hpRegen--;
             this.weight++;
         }
     },
     levelUp() {
-        player.hpRegen += this.step;
+        player.hpRegen--;
+        fire.ratio += this.step;
         if (this.lv == this.maxLv) {
             removeFromArr(cardArr, this);
         }
     },
     icon: [
-        // 0xffff, 0x8001, 0x9fe1, 0x87f1,
-        // 0xbffd, 0x8001, 0x8791, 0x8f09,
-        // 0x9f09, 0x9f09, 0x9f09, 0x9f09,
-        // 0x9f09, 0xb70d, 0x8001, 0xffff,
-
         0xffff, 0x85a1, 0x8e51, 0x9c09,
         0xb805, 0xb805, 0x9809, 0x8791,
         0x8f09, 0x9f09, 0x9f09, 0x9f09,
@@ -1037,6 +1041,5 @@ function initCard() {
     }
     clearArr(superCardArr);
     superCardArr.push(card_lightsaber);
-    superCardArr.push(card_magic_cloak);
+    superCardArr.push(card_fire_cloak);
 }
-initCard();
