@@ -402,7 +402,7 @@ const fire = Sprite({
         create: Sprite
     }),
     init() {
-        this.ratio = 40;
+        this.ratio = 80;
         this.active = false;
     },
     update(dt) {

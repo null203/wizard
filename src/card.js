@@ -949,7 +949,7 @@ const card_fire_cloak = {
     width: objSize * 2,
     height: objSize * 2,
     def: 5,
-    step: 20,
+    step: 30,
     weight: 1,
     getDetail() {
         return [
